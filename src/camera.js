@@ -16,6 +16,7 @@ IsoBlock.Camera.prototype = {
 		var c = this.zaxis.copy().mul(spacePos.z);
 		screenPos.add(a).add(b).add(c);
 		screenPos.mul(this.scale);
+		screenPos.y *= -1;
 		screenPos.add(this.origin);
 		return screenPos;
 	},

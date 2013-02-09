@@ -21,18 +21,24 @@ window.addEventListener("load", function() {
 		var s;
 
 		ctx.beginPath();
-		for (p.x=0; p.x<maxx; p.x+=step) {
+		for (p.x=0; p.x<=maxx; p.x+=step) {
 			p.y = 0;
 			s = camera.spaceToScreen(p); ctx.moveTo(s.x,s.y);
+			console.log(s);
 			p.y = maxy;
 			s = camera.spaceToScreen(p); ctx.lineTo(s.x,s.y);
+			console.log(s);
 		}
-		for (p.y=0; p.y<maxy; p.y+=step) {
+		for (p.y=0; p.y<=maxy; p.y+=step) {
 			p.x = 0;
 			s = camera.spaceToScreen(p); ctx.moveTo(s.x,s.y);
+			console.log(s);
 			p.x = maxx;
 			s = camera.spaceToScreen(p); ctx.lineTo(s.x,s.y);
+			console.log(s);
 		}
+		ctx.strokeStyle = "#555";
+		ctx.lineWidth = 1;
 		ctx.stroke();
 
 	};
