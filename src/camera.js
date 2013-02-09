@@ -3,9 +3,9 @@ IsoBlock.Camera = function(origin,scale) {
 	this.origin = origin;
 	this.scale = scale;
 	var a = Math.PI/6;
-	this.xaxis = { x: -Math.cos(a), y: Math.sin(a) };
-	this.yaxis = { x: Math.cos(a), y: Math.sin(a) };
-	this.zaxis = { x: 0, y: 1 };
+	this.xaxis = new IsoBlock.Vector(-Math.cos(a), Math.sin(a));
+	this.yaxis = new IsoBlock.Vector(Math.cos(a), Math.sin(a));
+	this.zaxis = new IsoBlock.Vector(0, 1);
 };
 
 IsoBlock.Camera.prototype = {
