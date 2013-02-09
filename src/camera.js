@@ -3,8 +3,8 @@ IsoBlock.Camera = function(origin,scale) {
 	this.origin = origin;
 	this.scale = scale;
 	var a = Math.PI/6;
-	this.xaxis = new IsoBlock.Vector(-Math.cos(a), Math.sin(a));
-	this.yaxis = new IsoBlock.Vector(Math.cos(a), Math.sin(a));
+	this.xaxis = new IsoBlock.Vector(Math.cos(a), Math.sin(a));
+	this.yaxis = new IsoBlock.Vector(-Math.cos(a), Math.sin(a));
 	this.zaxis = new IsoBlock.Vector(0, 1);
 };
 
