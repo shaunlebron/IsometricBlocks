@@ -40,7 +40,7 @@
 	<figure>
 		<canvas id='figure1a' width=350 height=200></canvas>
 		<canvas id='figure1b' width=350 height=200></canvas>
-		<figcaption>Figure 1: The boxes on the left are not drawn in the correct order, whereas the right figure is.  (All boxes are next to each other on the ground.)</figcaption>
+		<figcaption>Figure 1: The boxes on the left are not drawn in the correct order, whereas the boxes on the right are.  (All boxes are next to each other on the ground.)</figcaption>
 		<script>
 			var blocks = [
 				new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.green),
@@ -62,19 +62,25 @@
 		</script>
 	</figure>
 
-	<p>
-	There is a simple solution for programmatically determining the correct order to draw a given set of boxes.  But we must first define what we mean by <em>boxes</em>.
-	</p>
+<p>
+We will explore a simple solution for programmatically determining the correct
+order to draw a given set of boxes.  But we must first define what we mean by
+<em>boxes</em>.
+</p>
 
 	<h3>What do we mean by <em>boxes</em>?</h3>
 
-	<p>
-	In our solution, we are assuming that boxes are <em>axis-aligned</em> and <em>non-intersecting</em> rectangular prisms. Take a look at the above Figure 1 again.  Each box edge is parallel to either the x, y, or z axis; this means they are axis-aligned.  Also note that even though the boxes are next to each other, they do not intersect.
-	</p>
+<p>
+We define boxes as <em>axis-aligned</em> and <em>non-intersecting</em>
+rectangular prisms. Take a look at the above Figure 1 again.  Each box edge is
+parallel to either the x, y, or z axis (i.e. axis-aligned).  Also, note that
+the boxes are next to each other but do not intersect.
+</p>
 
-	<p>
-	Now that we know that our boxes are axis-aligned and do not intersect each other, our next problem is to come up with an algorithm for determining when one box is in front of another.
-	</p>
+<p>
+Armed with this definition of a box, we now have a simple way to determine when one box
+is in front of another.
+</p>
 
 	<h3>How do we know when one box is in front of another?</h3>
 
