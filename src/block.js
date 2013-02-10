@@ -1,7 +1,8 @@
 
-IsoBlock.Block = function(pos,size) {
+IsoBlock.Block = function(pos,size,color) {
 	this.pos = pos;
 	this.size = size;
+	this.color = color || IsoBlock.colors.red;
 };
 
 IsoBlock.Block.prototype = {

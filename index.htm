@@ -4,18 +4,28 @@
 <head>
 	<meta charset="utf8">
 	<style>
-		#canvas {
+		canvas {
 			border: 1px solid black;
 		}
 	</style>
 </head>
 <body>
-	<canvas id='canvas' width=400 height=200>Please upgrade your browser to view this demo.</canvas>
 	<script src='src/main.js'></script>
 	<script src='src/colors.js'></script>
 	<script src='src/block.js'></script>
 	<script src='src/camera.js'></script>
 	<script src='src/vector.js'></script>
 	<script src='src/painter.js'></script>
+	<script src='src/sortBlocks.js'></script>
+	
+	<canvas id='figure1' width=400 height=200></canvas>
+	<script>
+		IsoBlock.makeFigure('figure1', [
+			new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.black),
+			new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.purple),
+			new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
+		]);
+	</script>
+
 </body>
 </html>

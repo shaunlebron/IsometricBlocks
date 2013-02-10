@@ -1,12 +1,13 @@
 
 var IsoBlock = IsoBlock || {};
 
-window.addEventListener("load", function() {
-	var canvas = document.getElementById('canvas');
+IsoBlock.makeFigure = function(canvasId, blocks) {
+
+	var canvas = document.getElementById(canvasId);
 	var ctx = canvas.getContext('2d');
 
 	var scale = canvas.height / 8;
-	var origin = {x: canvas.width/2, y: canvas.height*0.75 };
+	var origin = {x: canvas.width/2, y: canvas.height*0.85 };
 	var camera = new IsoBlock.Camera(origin, scale);
 	var painter = new IsoBlock.Painter(camera);
 
@@ -24,12 +25,41 @@ window.addEventListener("load", function() {
 			painter.moveTo(ctx, {x:-maxx, y:y, z:0});
 			painter.lineTo(ctx, {x:maxx, y:y, z:0});
 		}
-		ctx.strokeStyle = "#BBB";
+		ctx.strokeStyle = "#CCC";
 		ctx.lineWidth = 1;
 		ctx.stroke();
+
+		var axisColor = "#444";
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = axisColor;
+		ctx.fillStyle = axisColor;
+		var arrowLen = 7;
+		var arrowSize = 0.3;
+
+		ctx.beginPath();
+		painter.moveTo(ctx, {x:-arrowLen, y:0, z:0});
+		painter.lineTo(ctx, {x:arrowLen, y:0, z:0});
+		painter.moveTo(ctx, {x:0, y:-arrowLen, z:0});
+		painter.lineTo(ctx, {x:0, y:arrowLen, z:0});
+		ctx.stroke();
+
+		ctx.beginPath();
+		painter.moveTo(ctx, {x:arrowLen, y:0, z:0});
+		painter.lineTo(ctx, {x:arrowLen-arrowSize, y:-arrowSize, z:0});
+		painter.lineTo(ctx, {x:arrowLen-arrowSize, y:arrowSize, z:0});
+		ctx.closePath();
+		ctx.fill();
+
+		ctx.beginPath();
+		painter.moveTo(ctx, {y:arrowLen, x:0, z:0});
+		painter.lineTo(ctx, {y:arrowLen-arrowSize, x:-arrowSize, z:0});
+		painter.lineTo(ctx, {y:arrowLen-arrowSize, x:arrowSize, z:0});
+		ctx.closePath();
+		ctx.fill();
+
 	};
 
-	function drawBlock(block,color) {
+	function drawBlock(block) {
 		// alias the position and size
 		var p = block.pos;
 		var s = block.size;
@@ -46,6 +76,7 @@ window.addEventListener("load", function() {
 
 		// fill each visible face of the block.
 		var lineWidth = 1;
+		var color = block.color;
 		painter.fillQuad(ctx, frontDown, leftDown, leftUp, frontUp, color[0], lineWidth);
 		painter.fillQuad(ctx, frontUp, leftUp, backUp, rightUp, color[1], lineWidth);
 		painter.fillQuad(ctx, frontDown, frontUp, rightUp, rightDown, color[2], lineWidth);
@@ -53,12 +84,11 @@ window.addEventListener("load", function() {
 
 	drawGrid();
 
-	var block1 = new IsoBlock.Block({x:0,y:2,z:0},{x:2,y:2,z:2.5});
-	var block2 = new IsoBlock.Block({x:1,y:1,z:0},{x:1,y:1,z:1.5});
-	var block3 = new IsoBlock.Block({x:2,y:0,z:0},{x:1,y:4,z:1});
+	var sortedBlocks = IsoBlock.sortBlocks(blocks, camera);
 
-	drawBlock(block3, IsoBlock.colors.blue);
-	drawBlock(block1, IsoBlock.colors.black);
-	drawBlock(block2, IsoBlock.colors.purple);
+	var i,len;
+	for(i=0,len=sortedBlocks.length; i<len; i++) {
+		drawBlock(sortedBlocks[i]);
+	}
+};
 
-});
