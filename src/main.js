@@ -1,20 +1,25 @@
 
 var IsoBlock = IsoBlock || {};
 
-IsoBlock.makeFigure = function(canvasId, blocks) {
+IsoBlock.makeFigure = function(options) {
+
+	var canvasId = options.canvas;
+	var blocks = options.blocks;
+	var shouldSortBlocks = options.sortBlocks;
+	var shouldDrawAxes = options.drawAxis;
 
 	var canvas = document.getElementById(canvasId);
 	var ctx = canvas.getContext('2d');
 
 	var scale = canvas.height / 8;
-	var origin = {x: canvas.width/2, y: canvas.height*0.85 };
+	var origin = {x: canvas.width/2, y: canvas.height*0.95 };
 	var camera = new IsoBlock.Camera(origin, scale);
 	var painter = new IsoBlock.Painter(camera);
 
 	function drawGrid() {
 		var step = 1;
-		var maxx = 10;
-		var maxy = 10;
+		var maxx = 11;
+		var maxy = 11;
 
 		ctx.beginPath();
 		for (x=-maxx; x<=maxx; x+=step) {
@@ -28,6 +33,10 @@ IsoBlock.makeFigure = function(canvasId, blocks) {
 		ctx.strokeStyle = "#CCC";
 		ctx.lineWidth = 1;
 		ctx.stroke();
+
+	};
+
+	function drawAxes() {
 
 		var axisColor = "#444";
 		ctx.lineWidth = 1;
@@ -56,8 +65,7 @@ IsoBlock.makeFigure = function(canvasId, blocks) {
 		painter.lineTo(ctx, {y:arrowLen-arrowSize, x:arrowSize, z:0});
 		ctx.closePath();
 		ctx.fill();
-
-	};
+	}
 
 	function drawBlock(block) {
 		// alias the position and size
@@ -84,11 +92,17 @@ IsoBlock.makeFigure = function(canvasId, blocks) {
 
 	drawGrid();
 
-	var sortedBlocks = IsoBlock.sortBlocks(blocks, camera);
+	if (shouldDrawAxes) {
+		drawAxes();
+	}
+
+	if (shouldSortBlocks) {
+		blocks = IsoBlock.sortBlocks(blocks, camera);
+	}
 
 	var i,len;
-	for(i=0,len=sortedBlocks.length; i<len; i++) {
-		drawBlock(sortedBlocks[i]);
+	for(i=0,len=blocks.length; i<len; i++) {
+		drawBlock(blocks[i]);
 	}
 };
 

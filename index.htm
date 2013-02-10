@@ -4,12 +4,24 @@
 <head>
 	<meta charset="utf8">
 	<style>
+		body {
+			width: 800px;
+			margin-left:auto;
+			margin-right:auto;
+			font-size: 1.2em;
+		}
 		canvas {
+			background-color: #EEE;
 			border: 1px solid black;
 		}
+		#abstract {
+			font-style: italic;
+		}
+		figure {
+			margin-top:2em;
+			margin-bottom:2em;
+		}
 	</style>
-</head>
-<body>
 	<script src='src/main.js'></script>
 	<script src='src/colors.js'></script>
 	<script src='src/block.js'></script>
@@ -17,15 +29,56 @@
 	<script src='src/vector.js'></script>
 	<script src='src/painter.js'></script>
 	<script src='src/sortBlocks.js'></script>
+</head>
+<body>
 	
-	<canvas id='figure1' width=400 height=200></canvas>
-	<script>
-		IsoBlock.makeFigure('figure1', [
-			new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.black),
-			new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.purple),
-			new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
-		]);
-	</script>
+	<h1>Drawing isometric boxes in the correct order</h1>
+	<p>
+	In an <a href="http://en.wikipedia.org/wiki/Isometric_projection">isometric</a> display, it can be tricky to draw boxes of various sizes in the correct order to keep them in front of each other when appropriate.  The figure below shows an example.  The blue box should be drawn first, then green, then red.
+	</p>
+
+	<figure>
+		<canvas id='figure1a' width=350 height=200></canvas>
+		<canvas id='figure1b' width=350 height=200></canvas>
+		<figcaption>Figure 1: The boxes on the left are not drawn in the correct order, whereas the right figure is.  (All boxes are next to each other on the ground.)</figcaption>
+		<script>
+			var blocks = [
+				new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.green),
+				new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.red),
+				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
+			];
+			IsoBlock.makeFigure({
+				canvas:'figure1a',
+				blocks: blocks,
+				sortBlocks: false,
+				drawAxes: false,
+			});
+			IsoBlock.makeFigure({
+				canvas:'figure1b',
+				blocks: blocks,
+				sortBlocks: true,
+				drawAxes: false,
+			});
+		</script>
+	</figure>
+
+	<p>
+	There is a simple solution for programmatically determining the correct order to draw a given set of boxes.  But we must first define what we mean by <em>boxes</em>.
+	</p>
+
+	<h3>What do we mean by <em>boxes</em>?</h3>
+
+	<p>
+	In our solution, we are assuming that boxes are <em>axis-aligned</em> and <em>non-intersecting</em> rectangular prisms. Take a look at the above Figure 1 again.  Each box edge is parallel to either the x, y, or z axis; this means they are axis-aligned.  Also note that even though the boxes are next to each other, they do not intersect.
+	</p>
+
+	<p>
+	Now that we know that our boxes are axis-aligned and do not intersect each other, our next problem is to come up with an algorithm for determining when one box is in front of another.
+	</p>
+
+	<h3>How do we know when one box is in front of another?</h3>
+
+	<h3>What order do we draw the boxes in?</h3>
 
 </body>
 </html>
