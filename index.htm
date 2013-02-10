@@ -37,7 +37,7 @@
 	<p>
 In an <a href="http://en.wikipedia.org/wiki/Isometric_projection">isometric</a>
 display, it can be tricky to draw boxes of various sizes in the correct order
-to keep them in front of each other when appropriate.  The figure below shows
+to keep them appropriately in front of one another.  The figure below shows
 an example.  The blue box should be drawn first, then green, then red.
 	</p>
 
@@ -67,17 +67,16 @@ boxes on the right are.  (All boxes are next to each other on the ground.)
 	</figure>
 
 	<p>
-We will explore a simple solution for programmatically determining the correct
-order to draw a given set of boxes.  But we must first define what we mean by
-<em>boxes</em>.
+We will explore a simple solution for determining the correct order to draw a
+given set of boxes.  But first, we must define what we mean by <em>boxes</em>.
 	</p>
 
 	<h3>What do we mean by <em>boxes</em>?</h3>
 
 	<p>
 We define boxes as <em>axis-aligned</em> and <em>non-intersecting</em>
-rectangular prisms. Take a look at the above Figure 1 again.  Each box edge is
-parallel to either the x, y, or z axis (i.e. axis-aligned).  Also, note that
+rectangular prisms. Take a look at the above Figure 1 again.  Each box is
+parallel to the x, y, and z axis (i.e. axis-aligned).  Also, note that
 the boxes are next to each other but do not intersect.
 	</p>
 
@@ -89,10 +88,10 @@ one box is in front of another.
 	<h3>How can we determine when one box is in front of another?</h3>
 
 	<p>
-Because of the way we defined our boxes, we can always separate any two of them
-with a plane (shown in gray in Figure 2 below).  Thus, determining which box is
-in front of the other becomes a matter of determining which box is on the same
-side of the plane as the camera.
+Because of the way we defined our boxes, we can always separate one from
+another by establishing a plane between them (shown in gray in Figure 2 below).
+Thus, determining which box is in front of the other becomes a matter of
+determining which box is on the same side of the plane as the camera.
 	</p>
 
 	<figure>
@@ -100,7 +99,9 @@ side of the plane as the camera.
 		<canvas id='figure2b' width=230 height=200></canvas>
 		<canvas id='figure2c' width=230 height=200></canvas>
 		<figcaption>
-Figure 2: Three examples of finding which box is in front.  The plane separating the two boxes is shown in gray.  The box in front is simply whichever box is on the same side of this plane as the camera.
+Figure 2: Three examples of finding which box is in front.  The plane
+separating the two boxes is shown in gray.  The box in front is simply
+whichever box is on the same side of this plane as the camera.
 		</figcaption>
 		<script>
 			IsoBlock.makeFigure({
