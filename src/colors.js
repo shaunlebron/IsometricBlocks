@@ -12,3 +12,16 @@ IsoBlock.colors = {
 	white: ["#eeeeec", "#d3d7cf", "#babdb6"],
 	black: ["#888a85", "#555753", "#2e3436"],
 };
+
+// from David at http://stackoverflow.com/a/11508164/142317
+function hexToRgb(hex) {
+	if (hex[0] == "#") {
+		hex = hex.substring(1);
+	}
+    var bigint = parseInt(hex, 16);
+    var r = (bigint >> 16) & 255;
+    var g = (bigint >> 8) & 255;
+    var b = bigint & 255;
+
+    return r + "," + g + "," + b;
+}

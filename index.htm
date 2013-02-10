@@ -12,7 +12,11 @@
 		}
 		canvas {
 			background-color: #EEE;
-			border: 1px solid black;
+			border: 0px solid black;
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px #000;
+			margin-right: 5px;
+			text-align: center;
 		}
 		#abstract {
 			font-style: italic;
@@ -20,6 +24,10 @@
 		figure {
 			margin-top:2em;
 			margin-bottom:2em;
+		}
+		figcaption {
+			font-style: italic;
+			color: #555;
 		}
 	</style>
 	<script src='src/main.js'></script>
@@ -37,16 +45,16 @@
 	<p>
 In an <a href="http://en.wikipedia.org/wiki/Isometric_projection">isometric</a>
 display, it can be tricky to draw boxes of various sizes in the correct order
-to keep them appropriately in front of one another.  The figure below shows
-an example.  The blue box should be drawn first, then green, then red.
+to keep them appropriately in front of or behind one another.  The figure below
+shows an example.  The blue box should be drawn first, then green, then red.
 	</p>
 
 	<figure>
 		<canvas id='figure1a' width=350 height=200></canvas>
 		<canvas id='figure1b' width=350 height=200></canvas>
 		<figcaption>
-Figure 1: The boxes on the left are not drawn in the correct order, whereas the
-boxes on the right are.  (All boxes are next to each other on the ground.)
+Figure 1: The boxes on the left are <u>not</u> drawn in the correct order, whereas the
+boxes on the right are drawn correctly.
 		</figcaption>
 		<script>
 			var blocks = [
@@ -54,15 +62,8 @@ boxes on the right are.  (All boxes are next to each other on the ground.)
 				new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.red),
 				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
 			];
-			IsoBlock.makeFigure({
-				canvas:'figure1a',
-				blocks: blocks,
-				sortBlocks: false,
-			});
-			IsoBlock.makeFigure({
-				canvas:'figure1b',
-				blocks: blocks,
-			});
+			IsoBlock.makeFigure({ canvas:'figure1a', blocks: blocks, sortBlocks: false, });
+			IsoBlock.makeFigure({ canvas:'figure1b', blocks: blocks, });
 		</script>
 	</figure>
 
@@ -88,8 +89,8 @@ one box is in front of another.
 	<h3>How can we determine when one box is in front of another?</h3>
 
 	<p>
-Because of the way we defined our boxes, we can always separate one from
-another by establishing a plane between them (shown in gray in Figure 2 below).
+Because our boxes are non-intersecting, we can always separate one from
+another by establishing a plane between them (shown in Figure 2 below).
 Thus, determining which box is in front of the other becomes a matter of
 determining which box is on the same side of the plane as the camera.
 	</p>
@@ -99,34 +100,42 @@ determining which box is on the same side of the plane as the camera.
 		<canvas id='figure2b' width=230 height=200></canvas>
 		<canvas id='figure2c' width=230 height=200></canvas>
 		<figcaption>
-Figure 2: Three examples of finding which box is in front.  The plane
-separating the two boxes is shown in gray.  The box in front is simply
-whichever box is on the same side of this plane as the camera.
+Figure 2: A pair of blocks can be separated in one of three ways shown here. 
+The dark glass illustrates this separation.
 		</figcaption>
 		<script>
-			IsoBlock.makeFigure({
-				canvas:'figure2a',
-				blocks: [
-					new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.orange),
-					new IsoBlock.Block({x:2,y:4,z:0},{x:3,y:2,z:1}, IsoBlock.colors.green),
-				],
-				drawPlane: true,
+			var refBlock =   new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.red);
+			var leftBlock =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.blue);
+			var topBlock =   new IsoBlock.Block({x:4,y:2,z:2},{x:1.25,y:2,z:1}, IsoBlock.colors.orange);
+			var frontBlock = new IsoBlock.Block({x:1,y:1,z:0},{x:2,y:2,z:1}, IsoBlock.colors.green);
+			IsoBlock.makeFigure({ canvas:'figure2a', drawPlane: true,
+				blocks: [ refBlock, leftBlock ],
 			});
-			IsoBlock.makeFigure({
-				canvas:'figure2b',
-				blocks: [
-					new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.orange),
-					new IsoBlock.Block({x:4,y:2,z:2},{x:1,y:2,z:1}, IsoBlock.colors.green),
-				],
-				drawPlane: true,
+			IsoBlock.makeFigure({ canvas:'figure2b', drawPlane: true,
+				blocks: [ refBlock, topBlock ],
 			});
-			IsoBlock.makeFigure({
-				canvas:'figure2c',
-				blocks: [
-					new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.orange),
-					new IsoBlock.Block({x:1,y:1,z:0},{x:2,y:2,z:1}, IsoBlock.colors.green),
-				],
-				drawPlane: true,
+			IsoBlock.makeFigure({ canvas:'figure2c', drawPlane: true,
+				blocks: [ refBlock, frontBlock ],
+			});
+		</script>
+	</figure>
+
+	<p>
+This plane will separate the boxes on some axis.  Thus, we can locate this
+plane by looking for the axis wherein the boxes do not intersect (shown in
+Figure 3 below).
+	</p>
+
+	<figure>
+		<canvas id='figure3' width=640 height=240></canvas>
+		<figcaption>
+Figure 3: The box ranges on the x-axis do not intersect, so we use this axis to
+determine which box is in front.
+		</figcaption>
+		<script>
+			IsoBlock.makeFigure({ canvas:'figure3', drawPlane: true,
+				blocks: [ refBlock, leftBlock ],
+				drawAxis: true,
 			});
 		</script>
 	</figure>

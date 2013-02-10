@@ -13,7 +13,7 @@ IsoBlock.makeFigure = function(options) {
 	var ctx = canvas.getContext('2d');
 
 	var scale = (options.scale && options.scale(canvas.width,canvas.height)) || (canvas.height / 8);
-	var origin = (options.origin && options.origin(canvas.width,canvas.height)) || {x: canvas.width/2, y: canvas.height*0.95 };
+	var origin = (options.origin && options.origin(canvas.width,canvas.height)) || {x: canvas.width/2, y: canvas.height };
 
 	var camera = new IsoBlock.Camera(origin, scale);
 	var painter = new IsoBlock.Painter(camera);
@@ -67,6 +67,35 @@ IsoBlock.makeFigure = function(options) {
 		painter.lineTo(ctx, {y:arrowLen-arrowSize, x:arrowSize, z:0});
 		ctx.closePath();
 		ctx.fill();
+
+		var i,len,bounds,color,rgb,minp,maxp;
+		var space = 0.5;
+		for (i=0, len=blocks.length; i<len; i++) {
+			bounds = blocks[i].getBounds();
+			color = blocks[i].color[1];
+			rgb = hexToRgb(color);
+			tcolor = "rgba("+rgb+",0.8)";
+			
+			var x = 0;
+
+			minp = {x:x,y:bounds.ymin,z:0};
+			maxp = {x:x,y:bounds.ymax,z:0};
+
+			painter.fillCircle(ctx, minp, 4, tcolor);
+			painter.fillCircle(ctx, maxp, 4, tcolor);
+			painter.line(ctx, minp, maxp, tcolor, 3);
+
+			var y = 0;
+
+			minp = {x:bounds.xmin,y:y,z:0};
+			maxp = {x:bounds.xmax,y:y,z:0};
+
+			painter.fillCircle(ctx, minp, 4, tcolor);
+			painter.fillCircle(ctx, maxp, 4, tcolor);
+			painter.line(ctx, minp, maxp, tcolor, 3);
+			
+		}
+
 	}
 
 	function drawBlock(block) {
@@ -74,8 +103,14 @@ IsoBlock.makeFigure = function(options) {
 		var lineWidth = 1;
 		var color = block.color;
 		var b = block.getBounds();
-		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color[0], lineWidth);
-		painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, color[1], lineWidth);
+
+		// left face
+		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color[1], lineWidth);
+
+		// top face
+		painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, color[0], lineWidth);
+
+		// right face
 		painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color[2], lineWidth);
 	};
 
@@ -123,7 +158,8 @@ IsoBlock.makeFigure = function(options) {
 			finalPts.push(p);
 		}
 
-		painter.fillQuad(ctx, finalPts[0], finalPts[1], finalPts[2], finalPts[3], "rgba(0,0,0,0.25)");
+		painter.fillQuad(ctx, finalPts[0], finalPts[1], finalPts[2], finalPts[3], "rgba(0,0,0,0.35)");
+		painter.strokeQuad(ctx, finalPts[0], finalPts[1], finalPts[2], finalPts[3], "rgba(0,0,0,0.9)", 1);
 	};
 
 	drawGrid();
