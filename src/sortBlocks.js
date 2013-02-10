@@ -19,7 +19,7 @@ IsoBlock.sortBlocks = function(blocks, camera) {
 		blocks[i].blocksBehind = [];
 		blocks[i].blocksInFront = [];
 	}
-	
+
 	// For each pair of blocks, determine which is in front and behind.
 	var b1,b2;
 	for (i=0; i<numBlocks; i++) {

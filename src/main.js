@@ -5,14 +5,16 @@ IsoBlock.makeFigure = function(options) {
 
 	var canvasId = options.canvas;
 	var blocks = options.blocks;
-	var shouldSortBlocks = options.sortBlocks;
+	var shouldSortBlocks = (options.sortBlocks == undefined) ? true : options.sortBlocks;
 	var shouldDrawAxes = options.drawAxis;
+	var shouldDrawPlane = options.drawPlane;
 
 	var canvas = document.getElementById(canvasId);
 	var ctx = canvas.getContext('2d');
 
-	var scale = canvas.height / 8;
-	var origin = {x: canvas.width/2, y: canvas.height*0.95 };
+	var scale = (options.scale && options.scale(canvas.width,canvas.height)) || (canvas.height / 8);
+	var origin = (options.origin && options.origin(canvas.width,canvas.height)) || {x: canvas.width/2, y: canvas.height*0.95 };
+
 	var camera = new IsoBlock.Camera(origin, scale);
 	var painter = new IsoBlock.Painter(camera);
 
@@ -68,26 +70,60 @@ IsoBlock.makeFigure = function(options) {
 	}
 
 	function drawBlock(block) {
-		// alias the position and size
-		var p = block.pos;
-		var s = block.size;
-
-		// alias each vertex of the block.
-		var leftDown =  {x:p.x+s.x, y:p.y,     z:p.z};
-		var rightDown = {x:p.x,     y:p.y+s.y, z:p.z};
-		var backDown =  {x:p.x+s.x, y:p.y+s.y, z:p.z};
-		var frontDown = {x:p.x,     y:p.y,     z:p.z};
-		var leftUp =    {x:p.x+s.x, y:p.y,     z:p.z+s.z};
-		var rightUp =   {x:p.x,     y:p.y+s.y, z:p.z+s.z};
-		var backUp =    {x:p.x+s.x, y:p.y+s.y, z:p.z+s.z};
-		var frontUp =   {x:p.x,     y:p.y,     z:p.z+s.z};
-
 		// fill each visible face of the block.
 		var lineWidth = 1;
 		var color = block.color;
-		painter.fillQuad(ctx, frontDown, leftDown, leftUp, frontUp, color[0], lineWidth);
-		painter.fillQuad(ctx, frontUp, leftUp, backUp, rightUp, color[1], lineWidth);
-		painter.fillQuad(ctx, frontDown, frontUp, rightUp, rightDown, color[2], lineWidth);
+		var b = block.getBounds();
+		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color[0], lineWidth);
+		painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, color[1], lineWidth);
+		painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color[2], lineWidth);
+	};
+
+	function drawSeparationPlane(frontBlock, backBlock) {
+		if (!backBlock) {
+			return;
+		}
+
+		var bounds = frontBlock.getBounds();
+
+		var aAxis = camera.isBlockInFront(frontBlock, backBlock);
+		var bAxis,cAxis;
+
+		if (aAxis == 'x') {
+			a = bounds.xmax;
+			bAxis = 'y';
+			cAxis = 'z';
+		}
+		else if (aAxis == 'y') {
+			a = bounds.ymax;
+			bAxis = 'x';
+			cAxis = 'z';
+		}
+		else if (aAxis == 'z') {
+			a = bounds.zmin;
+			bAxis = 'x';
+			cAxis = 'y';
+		}
+
+		var r = 0.7;
+		var pts = [
+			{ a:a, b: bounds[bAxis+"min"]-r, c: bounds[cAxis+"min"]-r },
+			{ a:a, b: bounds[bAxis+"min"]-r, c: bounds[cAxis+"max"]+r },
+			{ a:a, b: bounds[bAxis+"max"]+r, c: bounds[cAxis+"max"]+r },
+			{ a:a, b: bounds[bAxis+"max"]+r, c: bounds[cAxis+"min"]-r },
+		];
+
+		var i;
+		var finalPts = [];
+		for (i=0; i<4; i++) {
+			var p = {};
+			p[aAxis] = pts[i].a;
+			p[bAxis] = pts[i].b;
+			p[cAxis] = pts[i].c;
+			finalPts.push(p);
+		}
+
+		painter.fillQuad(ctx, finalPts[0], finalPts[1], finalPts[2], finalPts[3], "rgba(0,0,0,0.25)");
 	};
 
 	drawGrid();
@@ -102,6 +138,9 @@ IsoBlock.makeFigure = function(options) {
 
 	var i,len;
 	for(i=0,len=blocks.length; i<len; i++) {
+		if (shouldDrawPlane && i>0 && i==len-1) {
+			drawSeparationPlane(blocks[i], blocks[i-1]);
+		}
 		drawBlock(blocks[i]);
 	}
 };

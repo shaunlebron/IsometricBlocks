@@ -33,14 +33,21 @@
 <body>
 	
 	<h1>Drawing isometric boxes in the correct order</h1>
+
 	<p>
-	In an <a href="http://en.wikipedia.org/wiki/Isometric_projection">isometric</a> display, it can be tricky to draw boxes of various sizes in the correct order to keep them in front of each other when appropriate.  The figure below shows an example.  The blue box should be drawn first, then green, then red.
+In an <a href="http://en.wikipedia.org/wiki/Isometric_projection">isometric</a>
+display, it can be tricky to draw boxes of various sizes in the correct order
+to keep them in front of each other when appropriate.  The figure below shows
+an example.  The blue box should be drawn first, then green, then red.
 	</p>
 
 	<figure>
 		<canvas id='figure1a' width=350 height=200></canvas>
 		<canvas id='figure1b' width=350 height=200></canvas>
-		<figcaption>Figure 1: The boxes on the left are not drawn in the correct order, whereas the boxes on the right are.  (All boxes are next to each other on the ground.)</figcaption>
+		<figcaption>
+Figure 1: The boxes on the left are not drawn in the correct order, whereas the
+boxes on the right are.  (All boxes are next to each other on the ground.)
+		</figcaption>
 		<script>
 			var blocks = [
 				new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.green),
@@ -51,40 +58,81 @@
 				canvas:'figure1a',
 				blocks: blocks,
 				sortBlocks: false,
-				drawAxes: false,
 			});
 			IsoBlock.makeFigure({
 				canvas:'figure1b',
 				blocks: blocks,
-				sortBlocks: true,
-				drawAxes: false,
 			});
 		</script>
 	</figure>
 
-<p>
+	<p>
 We will explore a simple solution for programmatically determining the correct
 order to draw a given set of boxes.  But we must first define what we mean by
 <em>boxes</em>.
-</p>
+	</p>
 
 	<h3>What do we mean by <em>boxes</em>?</h3>
 
-<p>
+	<p>
 We define boxes as <em>axis-aligned</em> and <em>non-intersecting</em>
 rectangular prisms. Take a look at the above Figure 1 again.  Each box edge is
 parallel to either the x, y, or z axis (i.e. axis-aligned).  Also, note that
 the boxes are next to each other but do not intersect.
-</p>
+	</p>
 
-<p>
-Armed with this definition of a box, we now have a simple way to determine when one box
-is in front of another.
-</p>
+	<p>
+Armed with this definition of a box, we now have a simple way to determine when
+one box is in front of another.
+	</p>
 
-	<h3>How do we know when one box is in front of another?</h3>
+	<h3>How can we determine when one box is in front of another?</h3>
+
+	<p>
+Because of the way we defined our boxes, we can always separate any two of them
+with a plane (shown in gray in Figure 2 below).  Thus, determining which box is
+in front of the other becomes a matter of determining which box is on the same
+side of the plane as the camera.
+	</p>
+
+	<figure>
+		<canvas id='figure2a' width=230 height=200></canvas>
+		<canvas id='figure2b' width=230 height=200></canvas>
+		<canvas id='figure2c' width=230 height=200></canvas>
+		<figcaption>
+Figure 2: Three examples of finding which box is in front.  The plane separating the two boxes is shown in gray.  The box in front is simply whichever box is on the same side of this plane as the camera.
+		</figcaption>
+		<script>
+			IsoBlock.makeFigure({
+				canvas:'figure2a',
+				blocks: [
+					new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.orange),
+					new IsoBlock.Block({x:2,y:4,z:0},{x:3,y:2,z:1}, IsoBlock.colors.green),
+				],
+				drawPlane: true,
+			});
+			IsoBlock.makeFigure({
+				canvas:'figure2b',
+				blocks: [
+					new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.orange),
+					new IsoBlock.Block({x:4,y:2,z:2},{x:1,y:2,z:1}, IsoBlock.colors.green),
+				],
+				drawPlane: true,
+			});
+			IsoBlock.makeFigure({
+				canvas:'figure2c',
+				blocks: [
+					new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.orange),
+					new IsoBlock.Block({x:1,y:1,z:0},{x:2,y:2,z:1}, IsoBlock.colors.green),
+				],
+				drawPlane: true,
+			});
+		</script>
+	</figure>
 
 	<h3>What order do we draw the boxes in?</h3>
+
+<a href="https://github.com/shaunew/IsometricBlocks"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 
 </body>
 </html>

@@ -7,13 +7,24 @@ IsoBlock.Block = function(pos,size,color) {
 
 IsoBlock.Block.prototype = {
 	getBounds: function() {
+		var p = this.pos;
+		var s = this.size;
+
 		return {
-			xmin: this.pos.x,
-			xmax: this.pos.x + this.size.x,
-			ymin: this.pos.y,
-			ymax: this.pos.y + this.size.y,
-			zmin: this.pos.z,
-			zmax: this.pos.z + this.size.z,
+			xmin: p.x,
+			xmax: p.x + s.x,
+			ymin: p.y,
+			ymax: p.y + s.y,
+			zmin: p.z,
+			zmax: p.z + s.z,
+			leftDown:  {x:p.x+s.x, y:p.y,     z:p.z},
+			rightDown: {x:p.x,     y:p.y+s.y, z:p.z},
+			backDown:  {x:p.x+s.x, y:p.y+s.y, z:p.z},
+			frontDown: {x:p.x,     y:p.y,     z:p.z},
+			leftUp:    {x:p.x+s.x, y:p.y,     z:p.z+s.z},
+			rightUp:   {x:p.x,     y:p.y+s.y, z:p.z+s.z},
+			backUp:    {x:p.x+s.x, y:p.y+s.y, z:p.z+s.z},
+			frontUp:   {x:p.x,     y:p.y,     z:p.z+s.z},
 		};
 	},
 };

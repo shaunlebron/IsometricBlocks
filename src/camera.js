@@ -25,12 +25,12 @@ IsoBlock.Camera.prototype = {
 		var b2 = block2.getBounds();
 
 		if (b1.xmin >= b2.xmax) { return false; }
-		else if (b2.xmin >= b1.xmax) { return true; }
+		else if (b2.xmin >= b1.xmax) { return 'x'; }
 
 		if (b1.ymin >= b2.ymax) { return false; }
-		else if (b2.ymin >= b1.ymax) { return true; }
+		else if (b2.ymin >= b1.ymax) { return 'y'; }
 
-		if (b1.zmin >= b2.zmax) { return true; }
+		if (b1.zmin >= b2.zmax) { return 'z'; }
 		else if (b2.zmin >= b1.zmax) { return false; }
 
 		throw "blocks must be non-intersecting to determine which is in front";
