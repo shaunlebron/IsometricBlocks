@@ -1,4 +1,6 @@
 
+// Allows us to paint shapes using isometric coordinates transformed by a given camera.
+// It's basically a wrapper for the canvas context.
 IsoBlock.Painter = function(camera) {
 	this.camera = camera;
 };
@@ -29,6 +31,28 @@ IsoBlock.Painter.prototype = {
 			ctx.strokeStyle = color;
 			ctx.stroke();
 		}
+	},
+	fillQuadGradient: function(ctx, p1, p2, p3, p4, color1, color2) {
+		var v1 = this.camera.spaceToScreen(p1);
+		var v4 = this.camera.spaceToScreen(p4);
+		var v2 = this.camera.spaceToScreen(p2);
+		var dx = v4.x-v1.x;
+		var dy = v4.y-v1.y;
+		var dist = Math.sqrt(dx*dx+dy*dy);
+		dx /= dist;
+		dy /= dist;
+		var dx2 = v2.x-v1.x;
+		var dy2 = v2.y-v1.y;
+		dist = Math.sqrt(dx2*dx2+dy2*dy2);
+		dx *= dist;
+		dy *= dist;
+		
+		
+		//var grad = ctx.createLinearGradient(v1.x, v1.y, v2.x, v2.y);
+		var grad = ctx.createLinearGradient(v1.x,v1.y, v1.x-dy, v1.y+dx);
+		grad.addColorStop(0, color1);
+		grad.addColorStop(1, color2);
+		this.fillQuad(ctx, p1,p2,p3,p4, grad);
 	},
 	strokeQuad: function(ctx, p1, p2, p3, p4, color, lineWidth) {
 		ctx.beginPath();

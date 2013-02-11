@@ -1,4 +1,5 @@
 
+// simple 2d vector class with arithmetic operations.
 IsoBlock.Vector = function(x,y) {
 	this.x = x;
 	this.y = y;

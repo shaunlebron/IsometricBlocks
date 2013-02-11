@@ -104,8 +104,8 @@ Figure 2: A pair of blocks can be separated in one of three ways shown here.
 The dark glass illustrates this separation.
 		</figcaption>
 		<script>
-			var refBlock =   new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.red);
-			var leftBlock =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.blue);
+			var refBlock =   new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
+			var leftBlock =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.red);
 			var topBlock =   new IsoBlock.Block({x:4,y:2,z:2},{x:1.25,y:2,z:1}, IsoBlock.colors.orange);
 			var frontBlock = new IsoBlock.Block({x:1,y:1,z:0},{x:2,y:2,z:1}, IsoBlock.colors.green);
 			IsoBlock.makeFigure({ canvas:'figure2a', drawPlane: true,
@@ -129,11 +129,10 @@ Figure 3 below).
 	<figure>
 		<canvas id='figure3' width=640 height=240></canvas>
 		<figcaption>
-Figure 3: The box ranges on the x-axis do not intersect, so we use this axis to
-determine which box is in front.
+Figure 3: The box ranges are shown on the x and y axes (z is not shown). Since the ranges on the y-axis are not intersecting, we use this axis for determining which box is in front.
 		</figcaption>
 		<script>
-			IsoBlock.makeFigure({ canvas:'figure3', drawPlane: true,
+			IsoBlock.makeFigure({ canvas:'figure3', drawPlane:true,
 				blocks: [ refBlock, leftBlock ],
 				drawAxis: true,
 			});

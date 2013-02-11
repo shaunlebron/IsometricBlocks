@@ -15,9 +15,12 @@ IsoBlock.colors = {
 
 // from David at http://stackoverflow.com/a/11508164/142317
 function hexToRgb(hex) {
+
+	// strip out "#" if present.
 	if (hex[0] == "#") {
 		hex = hex.substring(1);
 	}
+
     var bigint = parseInt(hex, 16);
     var r = (bigint >> 16) & 255;
     var g = (bigint >> 8) & 255;

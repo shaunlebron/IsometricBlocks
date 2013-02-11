@@ -3,102 +3,133 @@ var IsoBlock = IsoBlock || {};
 
 IsoBlock.makeFigure = function(options) {
 
+	// extract options
 	var canvasId = options.canvas;
 	var blocks = options.blocks;
 	var shouldSortBlocks = (options.sortBlocks == undefined) ? true : options.sortBlocks;
 	var shouldDrawAxes = options.drawAxis;
 	var shouldDrawPlane = options.drawPlane;
 
+	// set canvas and context.
 	var canvas = document.getElementById(canvasId);
 	var ctx = canvas.getContext('2d');
 
+	// extract scale and origin (camera attributes)
 	var scale = (options.scale && options.scale(canvas.width,canvas.height)) || (canvas.height / 8);
 	var origin = (options.origin && options.origin(canvas.width,canvas.height)) || {x: canvas.width/2, y: canvas.height };
 
+	// create camera and painter.
 	var camera = new IsoBlock.Camera(origin, scale);
 	var painter = new IsoBlock.Painter(camera);
 
+	// draw the xy grid
 	function drawGrid() {
+
+		// grid step
 		var step = 1;
+
+		// grid range
 		var maxx = 11;
 		var maxy = 11;
 
+		// plot x lines
 		ctx.beginPath();
 		for (x=-maxx; x<=maxx; x+=step) {
 			painter.moveTo(ctx, {x:x, y:-maxy, z:0});
 			painter.lineTo(ctx, {x:x, y:maxy, z:0});
 		}
+
+		// plot y lines
 		for (y=-maxy; y<=maxy; y+=step) {
 			painter.moveTo(ctx, {x:-maxx, y:y, z:0});
 			painter.lineTo(ctx, {x:maxx, y:y, z:0});
 		}
+
+		// draw grid lines
 		ctx.strokeStyle = "#CCC";
 		ctx.lineWidth = 1;
 		ctx.stroke();
 
 	};
 
+	// draw the xy axes and range bars for each block.
 	function drawAxes() {
 
 		var axisColor = "#444";
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = axisColor;
 		ctx.fillStyle = axisColor;
-		var arrowLen = 7;
+		var axisLen = 9;
 		var arrowSize = 0.3;
 
+		// draw x-axis and y-axis
 		ctx.beginPath();
-		painter.moveTo(ctx, {x:-arrowLen, y:0, z:0});
-		painter.lineTo(ctx, {x:arrowLen, y:0, z:0});
-		painter.moveTo(ctx, {x:0, y:-arrowLen, z:0});
-		painter.lineTo(ctx, {x:0, y:arrowLen, z:0});
+		painter.moveTo(ctx, {x:-axisLen, y:0, z:0});
+		painter.lineTo(ctx, {x:axisLen, y:0, z:0});
+		painter.moveTo(ctx, {x:0, y:-axisLen, z:0});
+		painter.lineTo(ctx, {x:0, y:axisLen, z:0});
 		ctx.stroke();
 
+		// draw x-axis arrow
 		ctx.beginPath();
-		painter.moveTo(ctx, {x:arrowLen, y:0, z:0});
-		painter.lineTo(ctx, {x:arrowLen-arrowSize, y:-arrowSize, z:0});
-		painter.lineTo(ctx, {x:arrowLen-arrowSize, y:arrowSize, z:0});
+		painter.moveTo(ctx, {x:axisLen, y:0, z:0});
+		painter.lineTo(ctx, {x:axisLen-arrowSize, y:-arrowSize, z:0});
+		painter.lineTo(ctx, {x:axisLen-arrowSize, y:arrowSize, z:0});
 		ctx.closePath();
 		ctx.fill();
 
+		// draw y-axis arrow
 		ctx.beginPath();
-		painter.moveTo(ctx, {y:arrowLen, x:0, z:0});
-		painter.lineTo(ctx, {y:arrowLen-arrowSize, x:-arrowSize, z:0});
-		painter.lineTo(ctx, {y:arrowLen-arrowSize, x:arrowSize, z:0});
+		painter.moveTo(ctx, {y:axisLen, x:0, z:0});
+		painter.lineTo(ctx, {y:axisLen-arrowSize, x:-arrowSize, z:0});
+		painter.lineTo(ctx, {y:axisLen-arrowSize, x:arrowSize, z:0});
 		ctx.closePath();
 		ctx.fill();
 
+		// draw axis labels
+		var p = camera.spaceToScreen({x:axisLen-1, y:-1, z:0});
+		ctx.font = "1em sans-serif";
+		ctx.fillText("x",p.x,p.y);
+		p = camera.spaceToScreen({x:-1, y:axisLen-1, z:0});
+		ctx.fillText("y",p.x,p.y);
+		
+
+		// draw axis ranges for each block
 		var i,len,bounds,color,rgb,minp,maxp;
-		var space = 0.5;
+		var s = 0.25;
 		for (i=0, len=blocks.length; i<len; i++) {
 			bounds = blocks[i].getBounds();
 			color = blocks[i].color[1];
 			rgb = hexToRgb(color);
-			tcolor = "rgba("+rgb+",0.8)";
-			
-			var x = 0;
+			tcolor = "rgba("+rgb+",0.7)";
 
-			minp = {x:x,y:bounds.ymin,z:0};
-			maxp = {x:x,y:bounds.ymax,z:0};
+			// alternate which side of the axis the range bar is on.
+			s*=-1;
 
-			painter.fillCircle(ctx, minp, 4, tcolor);
-			painter.fillCircle(ctx, maxp, 4, tcolor);
-			painter.line(ctx, minp, maxp, tcolor, 3);
+			// draw x axis range
+			painter.fillQuad(ctx,
+				{x:bounds.xmin, y:0, z:0},
+				{x:bounds.xmin, y:s, z:0},
+				{x:bounds.xmax, y:s, z:0},
+				{x:bounds.xmax, y:0, z:0},
+				tcolor
+			);
 
-			var y = 0;
-
-			minp = {x:bounds.xmin,y:y,z:0};
-			maxp = {x:bounds.xmax,y:y,z:0};
-
-			painter.fillCircle(ctx, minp, 4, tcolor);
-			painter.fillCircle(ctx, maxp, 4, tcolor);
-			painter.line(ctx, minp, maxp, tcolor, 3);
-			
+			// draw y axis range
+			painter.fillQuad(ctx,
+				{x:0, y:bounds.ymin, z:0},
+				{x:s, y:bounds.ymin, z:0},
+				{x:s, y:bounds.ymax, z:0},
+				{x:0, y:bounds.ymax, z:0},
+				tcolor
+			);
 		}
 
 	}
 
+	// draw a pseudo-shaded isometric block.
 	function drawBlock(block) {
+
 		// fill each visible face of the block.
 		var lineWidth = 1;
 		var color = block.color;
@@ -114,16 +145,24 @@ IsoBlock.makeFigure = function(options) {
 		painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color[2], lineWidth);
 	};
 
+	// draw a plane to separate two isometric blocks.
 	function drawSeparationPlane(frontBlock, backBlock) {
+
+		// exit if back plane is not present
 		if (!backBlock) {
 			return;
 		}
 
 		var bounds = frontBlock.getBounds();
 
+		// get axis of separation
 		var aAxis = camera.isBlockInFront(frontBlock, backBlock);
 		var bAxis,cAxis;
 
+		// aAxis, bAxis, cAxis are either 'x', 'y', or 'z'
+		// a, b, c are the values of its respective axis.
+
+		// determine what our abstract axes correspond to.
 		if (aAxis == 'x') {
 			a = bounds.xmax;
 			bAxis = 'y';
@@ -140,7 +179,10 @@ IsoBlock.makeFigure = function(options) {
 			cAxis = 'y';
 		}
 
+		// the radius (read margin) of the separation plane).
 		var r = 0.7;
+
+		// the points of the separation plane in abstract coords.
 		var pts = [
 			{ a:a, b: bounds[bAxis+"min"]-r, c: bounds[cAxis+"min"]-r },
 			{ a:a, b: bounds[bAxis+"min"]-r, c: bounds[cAxis+"max"]+r },
@@ -148,6 +190,7 @@ IsoBlock.makeFigure = function(options) {
 			{ a:a, b: bounds[bAxis+"max"]+r, c: bounds[cAxis+"min"]-r },
 		];
 
+		// convert abstract coords to the real coords for this block.
 		var i;
 		var finalPts = [];
 		for (i=0; i<4; i++) {
@@ -158,26 +201,37 @@ IsoBlock.makeFigure = function(options) {
 			finalPts.push(p);
 		}
 
+		// draw separation plane.
 		painter.fillQuad(ctx, finalPts[0], finalPts[1], finalPts[2], finalPts[3], "rgba(0,0,0,0.35)");
 		painter.strokeQuad(ctx, finalPts[0], finalPts[1], finalPts[2], finalPts[3], "rgba(0,0,0,0.9)", 1);
 	};
 
+	// draw grid
 	drawGrid();
 
+	// draw axes
 	if (shouldDrawAxes) {
 		drawAxes();
 	}
 
+	// sort blocks in drawing order.
 	if (shouldSortBlocks) {
 		blocks = IsoBlock.sortBlocks(blocks, camera);
 	}
 
+	// draw blocks and a separation plane if applicable.
 	var i,len;
 	for(i=0,len=blocks.length; i<len; i++) {
+
+		// only draw a separation plane for the last block
+		// and only if there is a block behind it.
 		if (shouldDrawPlane && i>0 && i==len-1) {
 			drawSeparationPlane(blocks[i], blocks[i-1]);
 		}
+
+		// draw block
 		drawBlock(blocks[i]);
 	}
+
 };
 

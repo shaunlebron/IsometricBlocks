@@ -1,3 +1,5 @@
+// From kennebec at http://stackoverflow.com/a/3955096/142317
+// Add a remove value function to the Array class.
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
     while (L && this.length) {
