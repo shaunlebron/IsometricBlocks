@@ -30,8 +30,8 @@ IsoBlock.makeFigure = function(options) {
 		var step = 1;
 
 		// grid range
-		var maxx = 11;
-		var maxy = 11;
+		var maxx = 15;
+		var maxy = 15;
 
 		// plot x lines
 		ctx.beginPath();

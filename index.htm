@@ -4,6 +4,10 @@
 <head>
 	<meta charset="utf8">
 	<style>
+		hr {
+			margin-top:3em;
+			margin-bottom:3em;
+		}
 		body {
 			width: 800px;
 			margin-left:auto;
@@ -60,6 +64,8 @@
 	<script src='src/sortBlocks.js'></script>
 </head>
 <body>
+<a href="https://github.com/shaunew/IsometricBlocks"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+
 	
 	<h1>Drawing isometric boxes in the correct order</h1>
 
@@ -194,7 +200,73 @@ The following is a javascript function for determining if the first block is in 
 
 	<h3>What order do we draw the boxes in?</h3>
 
-<a href="https://github.com/shaunew/IsometricBlocks"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+	<p>
+In general, <u>a box should not be drawn until all the ones behind it are
+drawn</u>.  Thus, we begin by drawing the boxes that have nothing behind them.
+Then, we can draw the boxes that are only in front of those that are already
+drawn. This process continues until all boxes are drawn. (See Figure 4 below
+for an example.)
+	</p>
+
+	<figure>
+		<canvas id='figure4' width=650 height=200></canvas>
+		<figcaption>
+Figure 4: (1) Nothing is behind blue, so draw it first. (2) Draw green next since blue was the only one behind it and is already drawn.  (3) Then draw red, since both blocks that were behind it have been drawn.
+		</figcaption>
+		<script>
+			var blocks = [
+				new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.green),
+				new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.red),
+				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
+			];
+			IsoBlock.makeFigure({ canvas:'figure4', blocks: blocks, scale: function(w,h) { return h/7; }});
+		</script>
+	</figure>
+
+	<p>
+To implement this algorithm, each box must know exactly which boxes are behind
+it.  We have already determined how to do this in the last section.  A search
+must be implemented so that each box has a list of boxes behind it.
+	</p>
+
+	<p>
+You are now armed with everything you need to know to render isometric boxes in
+the correct order.
+	</p>
+
+	<hr>
+	<h2>Appendix</h2>
+
+	
+	<h4>A formal description of the solution</h4>
+
+	<p>
+For those who are interested, the way in which we determined the drawing order
+of the boxes is known in graph theory as a <a
+href="http://en.wikipedia.org/wiki/Topological_sorting">topological sort</a>,
+which is essentially a depth-first search of a directed graph.
+	</p>
+
+	<p>
+You can build a directed graph of the <em>boxes</em>, with directed edges to the boxes that are behind it.
+Topologically sorting this graph will produce an ordered list of boxes that can be drawn in that exact order.
+	</p>
+
+	<h4>Full example of working code</h4>
+
+	<p>
+All the diagrams above were created using a simple isometric box renderer written in Javascript, which applies all the techniques described in this article.
+You can study the fully annotated source code on <a href="https://github.com/shaunew/IsometricBlocks">IsometricBlocks project on GitHub</a>.
+	</p>
+
+	<h4>Thanks</h4>
+
+	<p>
+Thanks to Ted Suzman at <a href="http://playbuildy.com/">buildy</a> for introducing this problem and solution to me.  And thanks to adamhayek for <a href="http://www.reddit.com/r/gamedev/comments/18222r/how_to_determine_the_draw_order_for_an_isometric/c8ayzby">further insight</a> on a general solution.
+	</p>
+
+	<hr>
+
 
 </body>
 </html>
