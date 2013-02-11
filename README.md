@@ -3,4 +3,5 @@ Isometric Blocks
 
 A tutorial on how to render isometric blocks in the correct order.
 
-[View it here.](http://shaunew.github.com/IsometricBlocks)
+<a href="http://shaunew.github.com/IsometricBlocks">
+<img src="http://shaunew.github.com/IsometricBlocks/isom.png"></a>

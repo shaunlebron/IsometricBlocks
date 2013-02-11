@@ -267,6 +267,30 @@ Thanks to Ted Suzman at <a href="http://playbuildy.com/">buildy</a> for introduc
 
 	<hr>
 
+	<figure>
+		<canvas id='figure5' width=700 height=200></canvas>
+		<script>
+			var blocks = [
+				new IsoBlock.Block({x:1,y:3,z:0},{x:2,y:2,z:2.5}, IsoBlock.colors.green),
+				new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.red),
+				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
+				new IsoBlock.Block({x:0.5,y:5,z:0},{x:2,y:1.5,z:1},   IsoBlock.colors.orange),
+				new IsoBlock.Block({x:3,y:3,z:1},{x:1,y:1,z:2.25},   IsoBlock.colors.black),
+
+				// why can't I set this to 1 without all the others disappearing?
+				new IsoBlock.Block({x:2,y:7,z:0},{x:1,y:1,z:1},   IsoBlock.colors.white), 
+
+				new IsoBlock.Block({x:5,y:1.5,z:0},{x:2,y:2,z:1.5}, IsoBlock.colors.purple),
+			];
+			IsoBlock.makeFigure({
+				canvas:'figure5',
+				blocks: blocks,
+				drawAxis:true,
+				axisLen: 12,
+			});
+		</script>
+	</figure>
+
 
 </body>
 </html>
