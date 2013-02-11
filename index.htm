@@ -170,13 +170,14 @@ the blocks are separated on the x-axis. (The z-axis is omitted for simplicity.)
 
 	<p>
 In Figure 3 above, we have chosen a coordinate system which make lesser values
-of <em>x</em> and <em>y</em> to be closer to the camera.  Though not shown,
-the <em>z</em> axis is positive in the up direction, so a greater value makes
-it closer to the camera.
+of <em>x</em> and <em>y</em> to be closer to the camera.  Though not shown, the
+<em>z</em> axis is positive in the up direction, so a greater value makes it
+closer to the camera.
 	</p>
 
 	<p>
-The following is a javascript function for determining if the first block is in front of the second:
+The following is a javascript function for determining if the first block is in
+front of the second:
 	</p>
 
 	<code class='block'><span class="Identifier">function</span> isBoxInFront(box1, box2) <span class="Identifier">{</span>
@@ -211,7 +212,9 @@ for an example.)
 	<figure>
 		<canvas id='figure4' width=650 height=200></canvas>
 		<figcaption>
-Figure 4: (1) Nothing is behind blue, so draw it first. (2) Draw green next since blue was the only one behind it and is already drawn.  (3) Then draw red, since both blocks that were behind it have been drawn.
+Figure 4: (1) Nothing is behind blue, so draw it first. (2) Draw green next
+since blue was the only one behind it and is already drawn.  (3) Then draw red,
+since both blocks that were behind it have been drawn.
 		</figcaption>
 		<script>
 			var blocks = [
@@ -248,21 +251,34 @@ which is essentially a depth-first search of a directed graph.
 	</p>
 
 	<p>
-You can build a directed graph of the <em>boxes</em>, with directed edges to the boxes that are behind it.
-Topologically sorting this graph will produce an ordered list of boxes that can be drawn in that exact order.
+You can build a directed graph of the <em>boxes</em>, with directed edges to
+the boxes that are behind it.  Topologically sorting this graph will produce an
+ordered list of boxes that can be drawn in that exact order.
+	</p>
+
+	<p>
+Mathematicians will recognize this directed graph as a <a
+href="http://en.wikipedia.org/wiki/Partially_ordered_set">partially ordered
+set</a>.
 	</p>
 
 	<h4>Full example of working code</h4>
 
 	<p>
-All the diagrams above were created using a simple isometric box renderer written in Javascript, which applies all the techniques described in this article.
-You can study the fully annotated source code on <a href="https://github.com/shaunew/IsometricBlocks">IsometricBlocks project on GitHub</a>.
+All the diagrams above were created using a simple isometric box renderer
+written in Javascript, which applies all the techniques described in this
+article.  You can study the fully annotated source code on <a
+href="https://github.com/shaunew/IsometricBlocks">IsometricBlocks project on
+GitHub</a>.
 	</p>
 
 	<h4>Thanks</h4>
 
 	<p>
-Thanks to Ted Suzman at <a href="http://playbuildy.com/">buildy</a> for introducing this problem and solution to me.  And thanks to adamhayek for <a href="http://www.reddit.com/r/gamedev/comments/18222r/how_to_determine_the_draw_order_for_an_isometric/c8ayzby">further insight</a> on a general solution.
+Thanks to Ted Suzman at <a href="http://playbuildy.com/">buildy</a> for
+introducing this problem and solution to me.  And thanks to adamhayek for <a
+href="http://www.reddit.com/r/gamedev/comments/18222r/how_to_determine_the_draw_order_for_an_isometric/c8ayzby">further
+insight</a> on a general solution.
 	</p>
 
 	<hr>
