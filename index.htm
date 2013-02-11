@@ -46,6 +46,16 @@
 			box-shadow: 0px 0px 2px #000;
 			border-radius: 5px;
 		}
+		p.alert{
+			border-radius: 5px;
+			box-shadow: 0px 0px 2px #000;
+			background-color: #ef2929;
+			color: white;
+			padding: 1em;
+		}
+		p.alert {
+			color: white;
+		}
 
 		/* from vim's TOhtml command for syntax highlighting code */
 		.lnr { color: #ff0000; }
@@ -66,6 +76,11 @@
 <body>
 <a href="https://github.com/shaunew/IsometricBlocks"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 
+
+<a style="text-decoration:none" href="http://www.reddit.com/r/gamedev/comments/18bg95/tutorial_how_to_render_isometric_blocks_correctly/c8dfx51">
+	<p class="alert">
+Slime0 at reddit identified two errors in this tutorial resulting from (1) possible overlap cycles and (2) incorrect deduction of order between two non-overlapping boxes.  This article will be updated when these issues are resolved.
+	</p></a>
 	
 	<h1>Drawing isometric boxes in the correct order</h1>
 
@@ -278,7 +293,7 @@ GitHub</a>.
 Thanks to Ted Suzman at <a href="http://playbuildy.com/">buildy</a> for
 introducing this problem and solution to me.  And thanks to adamhayek for <a
 href="http://www.reddit.com/r/gamedev/comments/18222r/how_to_determine_the_draw_order_for_an_isometric/c8ayzby">further
-insight</a> on a general solution.
+insight</a> on a general solution. And thanks to <a href="http://www.reddit.com/r/gamedev/comments/18bg95/tutorial_how_to_render_isometric_blocks_correctly/c8dfx51">Slime0 at reddit</a> for pointing out errors resulting in possible overlap cycles and incorrect deduction of order between two non-overlapping boxes.
 	</p>
 
 	<hr>
@@ -306,7 +321,6 @@ insight</a> on a general solution.
 			});
 		</script>
 	</figure>
-
 
 </body>
 </html>
