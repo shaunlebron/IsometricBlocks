@@ -9,6 +9,7 @@ IsoBlock.makeFigure = function(options) {
 	var shouldSortBlocks = (options.sortBlocks == undefined) ? true : options.sortBlocks;
 	var shouldDrawAxes = options.drawAxis;
 	var shouldDrawPlane = options.drawPlane;
+	var axisLen = options.axisLen || 7;
 
 	// set canvas and context.
 	var canvas = document.getElementById(canvasId);
@@ -59,7 +60,6 @@ IsoBlock.makeFigure = function(options) {
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = axisColor;
 		ctx.fillStyle = axisColor;
-		var axisLen = 9;
 		var arrowSize = 0.3;
 
 		// draw x-axis and y-axis
@@ -88,9 +88,12 @@ IsoBlock.makeFigure = function(options) {
 
 		// draw axis labels
 		var p = camera.spaceToScreen({x:axisLen-1, y:-1, z:0});
-		ctx.font = "1em sans-serif";
+		ctx.font = "italic 1em serif";
+		ctx.textBaseline='middle';
+		ctx.textAlign='right';
 		ctx.fillText("x",p.x,p.y);
 		p = camera.spaceToScreen({x:-1, y:axisLen-1, z:0});
+		ctx.textAlign='left';
 		ctx.fillText("y",p.x,p.y);
 		
 

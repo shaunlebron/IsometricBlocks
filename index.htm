@@ -29,7 +29,28 @@
 			font-style: italic;
 			color: #555;
 		}
+		code.block {
+			white-space: pre;
+			display:block;
+			margin-top:3em;
+			margin-bottom:3em;
+			margin-left: auto;
+			margin-right: auto;
+			width: 650px;
+			padding: 1.5em;
+			background: #eee;
+			box-shadow: 0px 0px 2px #000;
+			border-radius: 5px;
+		}
+
+		/* from vim's TOhtml command for syntax highlighting code */
+		.lnr { color: #ff0000; }
+		.Constant { color: #ef2929; }
+		.Statement { color: #3465a4; }
+		.Comment { color: #4e9a06; }
+		.Identifier { color: #3465a4; }
 	</style>
+
 	<script src='src/main.js'></script>
 	<script src='src/colors.js'></script>
 	<script src='src/block.js'></script>
@@ -77,22 +98,18 @@ given set of boxes.  But first, we must define what we mean by <em>boxes</em>.
 	<p>
 We define boxes as <em>axis-aligned</em> and <em>non-intersecting</em>
 rectangular prisms. Take a look at the above Figure 1 again.  Each box is
-parallel to the x, y, and z axis (i.e. axis-aligned).  Also, note that
-the boxes are next to each other but do not intersect.
-	</p>
-
-	<p>
-Armed with this definition of a box, we now have a simple way to determine when
-one box is in front of another.
+parallel to the <em>x</em>, <em>y</em>, and <em>z</em> axis (i.e.
+axis-aligned).  Also, note that the boxes are next to each other but do not
+intersect.
 	</p>
 
 	<h3>How can we determine when one box is in front of another?</h3>
 
 	<p>
-Because our boxes are non-intersecting, we can always separate one from
-another by establishing a plane between them (shown in Figure 2 below).
-Thus, determining which box is in front of the other becomes a matter of
-determining which box is on the same side of the plane as the camera.
+Since our boxes do not intersect each other, we can visualize their separation
+as a thin plane between them (see Figure 2 below).  After identifying this
+plane, we can determine which box is in front by selecting the one on the
+correct side of this plane.
 	</p>
 
 	<figure>
@@ -121,23 +138,59 @@ The dark glass illustrates this separation.
 	</figure>
 
 	<p>
-This plane will separate the boxes on some axis.  Thus, we can locate this
-plane by looking for the axis wherein the boxes do not intersect (shown in
-Figure 3 below).
+We can find this plane of separation by looking at each axis individually.  In
+particular, we look for an axis which has non-intersecting box ranges (see
+Figure 3 below).  
 	</p>
 
 	<figure>
-		<canvas id='figure3' width=640 height=240></canvas>
+		<canvas id='figure3a' width=350 height=200></canvas>
+		<canvas id='figure3b' width=350 height=200></canvas>
 		<figcaption>
-Figure 3: The box ranges are shown on the x and y axes (z is not shown). Since the ranges on the y-axis are not intersecting, we use this axis for determining which box is in front.
+Figure 3: On the left, the blocks are separated on the y-axis.  On the right,
+the blocks are separated on the x-axis. (The z-axis is omitted for simplicity.)
 		</figcaption>
 		<script>
-			IsoBlock.makeFigure({ canvas:'figure3', drawPlane:true,
+			IsoBlock.makeFigure({ canvas:'figure3a',
 				blocks: [ refBlock, leftBlock ],
+				drawAxis: true,
+			});
+			IsoBlock.makeFigure({ canvas:'figure3b',
+				blocks: [ refBlock, frontBlock ],
 				drawAxis: true,
 			});
 		</script>
 	</figure>
+
+	<p>
+In Figure 3 above, we have chosen a coordinate system which make lesser values
+of <em>x</em> and <em>y</em> to be closer to the camera.  Though not shown,
+the <em>z</em> axis is positive in the up direction, so a greater value makes
+it closer to the camera.
+	</p>
+
+	<p>
+The following is a javascript function for determining if the first block is in front of the second:
+	</p>
+
+	<code class='block'><span class="Identifier">function</span> isBoxInFront(box1, box2) <span class="Identifier">{</span>
+
+    <span class="Comment">// test for intersection x-axis</span>
+    <span class="Comment">// (lower x value is in front)</span>
+    <span class="Statement">if</span> (box1.xmin &gt;= box2.xmax) <span class="Identifier">{</span> <span class="Statement">return</span> <span class="Constant">false</span>; <span class="Identifier">}</span>
+    <span class="Statement">else</span> <span class="Statement">if</span> (box2.xmin &gt;= box1.xmax) <span class="Identifier">{</span> <span class="Statement">return</span> <span class="Constant">true</span>; <span class="Identifier">}</span>
+
+    <span class="Comment">// test for intersection y-axis</span>
+    <span class="Comment">// (lower y value is in front)</span>
+    <span class="Statement">if</span> (box1.ymin &gt;= box2.ymax) <span class="Identifier">{</span> <span class="Statement">return</span> <span class="Constant">false</span>; <span class="Identifier">}</span>
+    <span class="Statement">else</span> <span class="Statement">if</span> (box2.ymin &gt;= box1.ymax) <span class="Identifier">{</span> <span class="Statement">return</span> <span class="Constant">true</span>; <span class="Identifier">}</span>
+
+    <span class="Comment">// test for intersection z-axis</span>
+    <span class="Comment">// (higher z value is in front)</span>
+    <span class="Statement">if</span> (box1.zmin &gt;= box2.zmax) <span class="Identifier">{</span> <span class="Statement">return</span> <span class="Constant">true</span>; <span class="Identifier">}</span>
+    <span class="Statement">else</span> <span class="Statement">if</span> (box2.zmin &gt;= box1.zmax) <span class="Identifier">{</span> <span class="Statement">return</span> <span class="Constant">false</span>; <span class="Identifier">}</span>
+
+<span class="Identifier">}</span></code>
 
 	<h3>What order do we draw the boxes in?</h3>
 
