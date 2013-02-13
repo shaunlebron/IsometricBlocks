@@ -102,7 +102,7 @@ IsoBlock.makeFigure = function(options) {
 		var s = 0.25;
 		for (i=0, len=blocks.length; i<len; i++) {
 			bounds = blocks[i].getBounds();
-			color = blocks[i].color[1];
+			color = blocks[i].color.medium;
 			rgb = hexToRgb(color);
 			tcolor = "rgba("+rgb+",0.7)";
 
@@ -133,21 +133,34 @@ IsoBlock.makeFigure = function(options) {
 	// draw a pseudo-shaded isometric block.
 	function drawBlock(block) {
 
-		// fill each visible face of the block.
-		var lineWidth = 1;
 		var color = block.color;
 
 		// get aliases for each of the block's vertices relative to camera's perspective.
 		var b = camera.getIsoNamedSpaceVerts(block);
 
+		// fill in the grout for the inside edges
+		var lineWidth = 1;
+		var groutColor = color.medium;
+		painter.line(ctx, b.leftUp, b.frontUp, groutColor, lineWidth);
+		painter.line(ctx, b.rightUp, b.frontUp, groutColor, lineWidth);
+		painter.line(ctx, b.frontDown, b.frontUp, groutColor, lineWidth);
+
+		// Do not add line width when filling faces.
+		// This prevents a perimeter padding around the hexagon.
+		// Nonzero line width could cause the perimeter of another box
+		// to bleed over the edge of a box in front of it.
+		lineWidth = 0;
+
+		// fill each visible face of the block.
+
 		// left face
-		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color[1], lineWidth);
+		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color.dark, lineWidth);
 
 		// top face
-		painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, color[0], lineWidth);
+		painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, color.light, lineWidth);
 
 		// right face
-		painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color[2], lineWidth);
+		painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color.medium, lineWidth);
 	};
 
 	// draw a plane to separate two isometric blocks.

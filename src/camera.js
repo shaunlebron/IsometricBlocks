@@ -113,12 +113,12 @@ IsoBlock.Camera.prototype = {
 		var s = block.size;
 		
 		return {
-			leftDown:  {x:p.x+s.x, y:p.y,     z:p.z},
-			rightDown: {x:p.x,     y:p.y+s.y, z:p.z},
+			rightDown: {x:p.x+s.x, y:p.y,     z:p.z},
+			leftDown:  {x:p.x,     y:p.y+s.y, z:p.z},
 			backDown:  {x:p.x+s.x, y:p.y+s.y, z:p.z},
 			frontDown: {x:p.x,     y:p.y,     z:p.z},
-			leftUp:    {x:p.x+s.x, y:p.y,     z:p.z+s.z},
-			rightUp:   {x:p.x,     y:p.y+s.y, z:p.z+s.z},
+			rightUp:   {x:p.x+s.x, y:p.y,     z:p.z+s.z},
+			leftUp:    {x:p.x,     y:p.y+s.y, z:p.z+s.z},
 			backUp:    {x:p.x+s.x, y:p.y+s.y, z:p.z+s.z},
 			frontUp:   {x:p.x,     y:p.y,     z:p.z+s.z},
 		};
