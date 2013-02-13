@@ -136,7 +136,9 @@ IsoBlock.makeFigure = function(options) {
 		// fill each visible face of the block.
 		var lineWidth = 1;
 		var color = block.color;
-		var b = block.getBounds();
+
+		// get aliases for each of the block's vertices relative to camera's perspective.
+		var b = camera.getIsoNamedSpaceVerts(block);
 
 		// left face
 		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color[1], lineWidth);
@@ -159,7 +161,7 @@ IsoBlock.makeFigure = function(options) {
 		var bounds = frontBlock.getBounds();
 
 		// get axis of separation
-		var aAxis = camera.isBlockInFront(frontBlock, backBlock);
+		var aAxis = camera.getSpaceSepAxis(frontBlock, backBlock);
 		var bAxis,cAxis;
 
 		// aAxis, bAxis, cAxis are either 'x', 'y', or 'z'

@@ -68,8 +68,8 @@
 	<script src='src/main.js'></script>
 	<script src='src/colors.js'></script>
 	<script src='src/block.js'></script>
-	<script src='src/camera.js'></script>
 	<script src='src/vector.js'></script>
+	<script src='src/camera.js'></script>
 	<script src='src/painter.js'></script>
 	<script src='src/sortBlocks.js'></script>
 </head>
@@ -307,10 +307,7 @@ insight</a> on a general solution. And thanks to <a href="http://www.reddit.com/
 				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
 				new IsoBlock.Block({x:0.5,y:5,z:0},{x:2,y:1.5,z:1},   IsoBlock.colors.orange),
 				new IsoBlock.Block({x:3,y:3,z:1},{x:1,y:1,z:2.25},   IsoBlock.colors.black),
-
-				// why can't I set this to 1 without all the others disappearing?
 				new IsoBlock.Block({x:2,y:7,z:0},{x:1,y:1,z:1},   IsoBlock.colors.white), 
-
 				new IsoBlock.Block({x:5,y:1.5,z:0},{x:2,y:2,z:1.5}, IsoBlock.colors.purple),
 			];
 			IsoBlock.makeFigure({

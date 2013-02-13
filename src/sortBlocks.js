@@ -23,18 +23,21 @@ IsoBlock.sortBlocks = function(blocks, camera) {
 	}
 
 	// For each pair of blocks, determine which is in front and behind.
-	var b1,b2;
+	var a,b,frontBlock;
 	for (i=0; i<numBlocks; i++) {
-		b1 = blocks[i];
+		a = blocks[i];
 		for (j=i+1; j<numBlocks; j++) {
-			b2 = blocks[j];
-			if (camera.isBlockInFront(b1,b2)) {
-				b1.blocksBehind.push(b2);
-				b2.blocksInFront.push(b1);
-			}
-			else {
-				b2.blocksBehind.push(b1);
-				b1.blocksInFront.push(b2);
+			b = blocks[j];
+			frontBlock = camera.getFrontBlock(a,b);
+			if (frontBlock) {
+				if (a == frontBlock) {
+					a.blocksBehind.push(b);
+					b.blocksInFront.push(a);
+				}
+				else {
+					b.blocksBehind.push(a);
+					a.blocksInFront.push(b);
+				}
 			}
 		}
 	}
