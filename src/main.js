@@ -9,7 +9,8 @@ IsoBlock.makeFigure = function(options) {
 	var shouldSortBlocks = (options.sortBlocks == undefined) ? true : options.sortBlocks;
 	var shouldDrawAxes = options.drawAxis;
 	var shouldDrawPlane = options.drawPlane;
-	var axisLen = options.axisLen || 7;
+	var axisLen = options.axisLen;
+	var silhouette = options.silhouette;
 
 	// set canvas and context.
 	var canvas = document.getElementById(canvasId);
@@ -18,6 +19,16 @@ IsoBlock.makeFigure = function(options) {
 	// extract scale and origin (camera attributes)
 	var scale = (options.scale && options.scale(canvas.width,canvas.height)) || (canvas.height / 8);
 	var origin = (options.origin && options.origin(canvas.width,canvas.height)) || {x: canvas.width/2, y: canvas.height };
+
+	// compute appropriate axis length (assuming origin is horizontally centered)
+	if (!axisLen) {
+		// make sure the axis extends to the edge of the canvas
+		axisLen = Math.floor((canvas.width - origin.x) / scale / Math.cos(Math.PI/6)) - 0.5;
+	}
+	// this is the height of the horizontal axis shown for the silhouette.
+	// The haxis shares the same end points as the x and y axes.
+	// This height value is added to the end points to give it vertical displacement.
+	var hAxisHeight = origin.y/scale - 1 - axisLen/2; // height from origin subtracted from the height of the xy axis endpoints
 
 	// create camera and painter.
 	var camera = new IsoBlock.Camera(origin, scale);
@@ -62,12 +73,16 @@ IsoBlock.makeFigure = function(options) {
 		ctx.fillStyle = axisColor;
 		var arrowSize = 0.3;
 
-		// draw x-axis and y-axis
+		// draw x,y axes (and h axis if silhouette)
 		ctx.beginPath();
 		painter.moveTo(ctx, {x:-axisLen, y:0, z:0});
 		painter.lineTo(ctx, {x:axisLen, y:0, z:0});
 		painter.moveTo(ctx, {x:0, y:-axisLen, z:0});
 		painter.lineTo(ctx, {x:0, y:axisLen, z:0});
+		if (silhouette) {
+			painter.moveTo(ctx, {x:axisLen, y:0, z: hAxisHeight});
+			painter.lineTo(ctx, {x:0, y:axisLen, z: hAxisHeight});
+		}
 		ctx.stroke();
 
 		// draw x-axis arrow
@@ -101,7 +116,7 @@ IsoBlock.makeFigure = function(options) {
 		var i,len,bounds,color,rgb,minp,maxp;
 		var s = 0.25;
 		for (i=0, len=blocks.length; i<len; i++) {
-			bounds = blocks[i].getBounds();
+			bounds = silhouette ? camera.getIsoBounds(blocks[i]) : blocks[i].getBounds();
 			color = blocks[i].color.medium;
 			rgb = hexToRgb(color);
 			tcolor = "rgba("+rgb+",0.7)";
@@ -138,29 +153,45 @@ IsoBlock.makeFigure = function(options) {
 		// get aliases for each of the block's vertices relative to camera's perspective.
 		var b = camera.getIsoNamedSpaceVerts(block);
 
-		// fill in the grout for the inside edges
-		var lineWidth = 1;
-		var groutColor = color.medium;
-		painter.line(ctx, b.leftUp, b.frontUp, groutColor, lineWidth);
-		painter.line(ctx, b.rightUp, b.frontUp, groutColor, lineWidth);
-		painter.line(ctx, b.frontDown, b.frontUp, groutColor, lineWidth);
+		if (silhouette) {
+			var rgb = hexToRgb(color.medium);
+			var tcolor = "rgba("+rgb+",0.7)";
+			ctx.beginPath();
+			painter.moveTo(ctx, b.frontDown);
+			painter.lineTo(ctx, b.leftDown);
+			painter.lineTo(ctx, b.leftUp);
+			painter.lineTo(ctx, b.backUp);
+			painter.lineTo(ctx, b.rightUp);
+			painter.lineTo(ctx, b.rightDown);
+			ctx.fillStyle = tcolor;
+			ctx.fill();
+		}
+		else {
 
-		// Do not add line width when filling faces.
-		// This prevents a perimeter padding around the hexagon.
-		// Nonzero line width could cause the perimeter of another box
-		// to bleed over the edge of a box in front of it.
-		lineWidth = 0;
+			// fill in the grout for the inside edges
+			var lineWidth = 1;
+			var groutColor = color.medium;
+			painter.line(ctx, b.leftUp, b.frontUp, groutColor, lineWidth);
+			painter.line(ctx, b.rightUp, b.frontUp, groutColor, lineWidth);
+			painter.line(ctx, b.frontDown, b.frontUp, groutColor, lineWidth);
 
-		// fill each visible face of the block.
+			// Do not add line width when filling faces.
+			// This prevents a perimeter padding around the hexagon.
+			// Nonzero line width could cause the perimeter of another box
+			// to bleed over the edge of a box in front of it.
+			lineWidth = 0;
 
-		// left face
-		painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, color.dark, lineWidth);
+			// fill each visible face of the block.
 
-		// top face
-		painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, color.light, lineWidth);
+			// left face
+			painter.fillQuad(ctx, b.frontDown, b.leftDown, b.leftUp, b.frontUp, !silhouette ? color.dark : color.medium, lineWidth);
 
-		// right face
-		painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color.medium, lineWidth);
+			// top face
+			painter.fillQuad(ctx, b.frontUp, b.leftUp, b.backUp, b.rightUp, !silhouette ? color.light : color.medium, lineWidth);
+
+			// right face
+			painter.fillQuad(ctx, b.frontDown, b.frontUp, b.rightUp, b.rightDown, color.medium, lineWidth);
+		}
 	};
 
 	// draw a plane to separate two isometric blocks.

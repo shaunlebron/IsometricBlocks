@@ -124,7 +124,96 @@ axis-aligned).  Also, note that the boxes are next to each other but do not
 intersect.
 	</p>
 
-	<h3>How can we determine when one box is in front of another?</h3>
+	<h3>Determine if boxes overlap on screen.</h3>
+
+	<p>
+First of all, if two boxes do not overlap on the screen, then we do not have to
+worry about which one is drawn first.  This is the first test we must perform.
+	</p>
+
+	<figure>
+		<canvas id='figure-overlap1' width=350 height=200></canvas>
+		<canvas id='figure-overlap2' width=350 height=200></canvas>
+		<figcaption>
+No overlap on the left; overlap on the right.  (Note: we are talking about
+overlap on screen, not intersection in space.)
+		</figcaption>
+		<script>
+			var rightBlock =   new IsoBlock.Block({x:4,y:1,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
+			var leftBlock =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.red);
+			var rightBlockOverlap =   new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
+			var leftBlockOverlap =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.red);
+			var scale = function(w,h) { return h/9;};
+			IsoBlock.makeFigure({ canvas:'figure-overlap1',
+				blocks: [ leftBlock, rightBlock ],
+				scale: scale,
+			});
+			IsoBlock.makeFigure({ canvas:'figure-overlap2',
+				blocks: [ leftBlockOverlap, rightBlockOverlap ],
+				scale: scale,
+			});
+		</script>
+	</figure>
+
+	<p>
+When we test for overlap, we are essentially flattening the 3D boxes into 2D
+hexagons. (We remove the shading in the figure below to emphasize this).
+	</p>
+
+	<figure>
+		<canvas id='figure-overlap3' width=350 height=200></canvas>
+		<canvas id='figure-overlap4' width=350 height=200></canvas>
+		<figcaption>
+The box silhouettes in an isometric view are simple hexagons.  Their sides
+are always parallel to the vertical and two diagonal axes.
+		</figcaption>
+		<script>
+			IsoBlock.makeFigure({ canvas:'figure-overlap3',
+				blocks: [ leftBlock, rightBlock ],
+				scale: scale,
+				silhouette: true,
+			});
+			IsoBlock.makeFigure({ canvas:'figure-overlap4',
+				blocks: [ leftBlockOverlap, rightBlockOverlap ],
+				scale: scale,
+				silhouette: true,
+			});
+		</script>
+	</figure>
+
+	<p>
+Since these hexagon sides are always parallel to some axis, we simply check for
+overlap on each axis.
+	</p>
+
+	<figure>
+		<canvas id='figure-overlap5' width=350 height=200></canvas>
+		<canvas id='figure-overlap6' width=350 height=200></canvas>
+		<figcaption>
+The box silhouettes in an isometric view are simple hexagons.  Their sides
+are always parallel to the vertical and two diagonal axes. (Under construction, the horizontal axis should also display ranges)
+		</figcaption>
+		<script>
+			IsoBlock.makeFigure({ canvas:'figure-overlap5',
+				blocks: [ leftBlock, rightBlock ],
+				drawAxis: true,
+				silhouette: true,
+				scale: scale,
+			});
+			IsoBlock.makeFigure({ canvas:'figure-overlap6',
+				blocks: [ leftBlockOverlap, rightBlockOverlap ],
+				drawAxis: true,
+				silhouette: true,
+				scale: scale,
+			});
+		</script>
+	</figure>
+
+	<p>
+<em>Under construction</em>
+	</p>
+
+	<h3>Determine which box is in front.</h3>
 
 	<p>
 Since our boxes do not intersect each other, we can visualize their separation
@@ -214,7 +303,7 @@ front of the second:
 
 <span class="Identifier">}</span></code>
 
-	<h3>What order do we draw the boxes in?</h3>
+	<h3>Draw boxes in the correct order.</h3>
 
 	<p>
 In general, <u>a box should not be drawn until all the ones behind it are
@@ -251,6 +340,23 @@ must be implemented so that each box has a list of boxes behind it.
 You are now armed with everything you need to know to render isometric boxes in
 the correct order.
 	</p>
+
+	<h3>A conundrum</h3>
+
+	<p>
+It is possible to have a situation seen in the figure below.  The aforementioned drawing
+methods dictate that we first draw the box with nothing behind it.  You can see why we
+cannot do this here.
+	</p>
+
+	<figure>
+		<canvas id='figure-cycle' width=650 height=200></canvas>
+		<figcaption>
+TODO: draw a cycle
+		</figcaption>
+		<script>
+		</script>
+	</figure>
 
 	<hr>
 	<h2>Appendix</h2>
