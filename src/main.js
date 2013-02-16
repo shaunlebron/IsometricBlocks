@@ -107,18 +107,20 @@ IsoBlock.makeFigure = function(options) {
 		ctx.fill();
 
 		// draw h-axis arrow
-		ctx.beginPath();
-		painter.moveTo(ctx, hAxisStart);
-		painter.lineTo(ctx, {h:hAxisStart.h+arrowSize, v:hAxisV+arrowSize});
-		painter.lineTo(ctx, {h:hAxisStart.h+arrowSize, v:hAxisV-arrowSize});
-		ctx.closePath();
-		ctx.fill();
-		ctx.beginPath();
-		painter.moveTo(ctx, hAxisEnd);
-		painter.lineTo(ctx, {h:hAxisEnd.h-arrowSize, v:hAxisV+arrowSize});
-		painter.lineTo(ctx, {h:hAxisEnd.h-arrowSize, v:hAxisV-arrowSize});
-		ctx.closePath();
-		ctx.fill();
+		if (silhouette) {
+			ctx.beginPath();
+			painter.moveTo(ctx, hAxisStart);
+			painter.lineTo(ctx, {h:hAxisStart.h+arrowSize, v:hAxisV+arrowSize});
+			painter.lineTo(ctx, {h:hAxisStart.h+arrowSize, v:hAxisV-arrowSize});
+			ctx.closePath();
+			ctx.fill();
+			ctx.beginPath();
+			painter.moveTo(ctx, hAxisEnd);
+			painter.lineTo(ctx, {h:hAxisEnd.h-arrowSize, v:hAxisV+arrowSize});
+			painter.lineTo(ctx, {h:hAxisEnd.h-arrowSize, v:hAxisV-arrowSize});
+			ctx.closePath();
+			ctx.fill();
+		}
 
 		// draw axis labels
 		var p = painter.transform({x:axisLen-1, y:-1});
@@ -129,6 +131,11 @@ IsoBlock.makeFigure = function(options) {
 		p = painter.transform({x:-1, y:axisLen-1});
 		ctx.textAlign='left';
 		ctx.fillText("y",p.x,p.y);
+		if (silhouette) {
+			p = painter.transform({h:hAxisEnd.h, v:hAxisV-1});
+			ctx.textAlign='right';
+			ctx.fillText("h",p.x,p.y);
+		}
 		
 		// draw axis ranges for each block
 		var i,len,bounds,color,rgb,minp,maxp;
@@ -159,8 +166,17 @@ IsoBlock.makeFigure = function(options) {
 				{x:0, y:bounds.ymax},
 				tcolor
 			);
-		}
 
+			if (silhouette) {
+				painter.fillQuad(ctx,
+					{h:bounds.hmin, v:hAxisV+s},
+					{h:bounds.hmax, v:hAxisV+s},
+					{h:bounds.hmax, v:hAxisV},
+					{h:bounds.hmin, v:hAxisV},
+					tcolor
+				);
+			}
+		}
 	}
 
 	// draw a pseudo-shaded isometric block.

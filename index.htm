@@ -77,11 +77,6 @@
 <a href="https://github.com/shaunew/IsometricBlocks"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 
 
-<a style="text-decoration:none" href="http://www.reddit.com/r/gamedev/comments/18bg95/tutorial_how_to_render_isometric_blocks_correctly/c8dfx51">
-	<p class="alert">
-Slime0 at reddit identified two errors in this tutorial resulting from (1) possible overlap cycles and (2) incorrect deduction of order between two non-overlapping boxes.  This article will be updated when these issues are resolved.
-	</p></a>
-	
 	<h1>Drawing isometric boxes in the correct order</h1>
 
 	<p>
@@ -128,7 +123,8 @@ intersect.
 
 	<p>
 First of all, if two boxes do not overlap on the screen, then we do not have to
-worry about which one is drawn first.  This is the first test we must perform.
+worry about which one is drawn first.  This is the first test we must perform,
+which we explore in this section.
 	</p>
 
 	<figure>
@@ -142,7 +138,7 @@ overlap on screen, not intersection in space.)
 			var rightBlock =   new IsoBlock.Block({x:4,y:1,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
 			var leftBlock =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.red);
 			var rightBlockOverlap =   new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
-			var leftBlockOverlap =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.red);
+			var leftBlockOverlap =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.green);
 			var scale = function(w,h) { return h/9;};
 			IsoBlock.makeFigure({ canvas:'figure-overlap1',
 				blocks: [ leftBlock, rightBlock ],
@@ -156,15 +152,15 @@ overlap on screen, not intersection in space.)
 	</figure>
 
 	<p>
-When we test for overlap, we are essentially flattening the 3D boxes into 2D
-hexagons. (We remove the shading in the figure below to emphasize this).
+The silhouettes of the 3D boxes become 2D hexagons in the isometric view, as seen below.  We use the
+outline of these silhouettes to test for overlap.
 	</p>
 
 	<figure>
 		<canvas id='figure-overlap3' width=350 height=200></canvas>
 		<canvas id='figure-overlap4' width=350 height=200></canvas>
 		<figcaption>
-The box silhouettes in an isometric view are simple hexagons.  Their sides
+The box silhouettes in an isometric view are simple hexagons.  Note that their sides
 are always parallel to the vertical and two diagonal axes.
 		</figcaption>
 		<script>
@@ -182,16 +178,18 @@ are always parallel to the vertical and two diagonal axes.
 	</figure>
 
 	<p>
-Since these hexagon sides are always parallel to some axis, we simply check for
-overlap on each axis.
+We take advantage of the fact that the hexagon sides are always parallel to
+some axis.  This allows us to easily determine if the hexagons overlap by
+checking for intersection of their regions on each axis.  We add an <em>h</em>
+(horizontal) axis to help.
 	</p>
 
 	<figure>
 		<canvas id='figure-overlap5' width=350 height=200></canvas>
 		<canvas id='figure-overlap6' width=350 height=200></canvas>
 		<figcaption>
-The box silhouettes in an isometric view are simple hexagons.  Their sides
-are always parallel to the vertical and two diagonal axes. (Under construction, the horizontal axis should also display ranges)
+The red and blue boxes do not overlap on the h axis, therefore they do not overlap.
+The green and blue boxes do overlap since their region on every axis overlap.
 		</figcaption>
 		<script>
 			IsoBlock.makeFigure({ canvas:'figure-overlap5',
@@ -210,13 +208,64 @@ are always parallel to the vertical and two diagonal axes. (Under construction, 
 	</figure>
 
 	<p>
-<em>Under construction</em>
+Now that we have outlined our concept for <em>determining if two boxes overlap
+on the screen</em>, we will fill in the details necessary for implementing it.
+	</p>
+
+	<p>
+The act of flattening the 3D box into a 2D hexagon involves getting rid of the
+Z coordinate.  Notice that increasing a point's Z coordinate by 1 is the same
+as incrementing both X and Y coordinates by 1.  Thus, we can add Z to both X
+and Y and drop Z completely.  Shown below is the source code for a function
+that performs this conversion.
+	</p>
+
+<code class='block'><span class="Comment">// Convert a 3D space position to a 2D isometric position.</span>
+<span class="Identifier">function</span> spaceToIso(spacePos) <span class="Identifier">{</span>
+
+    <span class="Comment">// New XY position simply adds Z to X and Y.</span>
+    <span class="Identifier">var</span> isoX = spacePos.x + spacePos.z;
+    <span class="Identifier">var</span> isoY = spacePos.y + spacePos.z;
+
+    <span class="Statement">return</span> <span class="Identifier">{</span>
+        x: isoX,
+        y: isoY,
+
+        <span class="Comment">// Compute horizontal distance from origin.</span>
+        h: (isoX - isoY) * Math.cos(Math.PI/6),
+
+        <span class="Comment">// Compute vertical distance from origin.</span>
+        v: (isoX + isoY) / 2;
+    <span class="Identifier">}</span>;
+<span class="Identifier">}</span></code>
+
+	<p>
+And finally, after determining the bounds of each hexagon, we can determine if
+they overlap by using the source code below.
+	</p>
+
+<code class='block'><span class="Identifier">function</span> doHexagonsOverlap(hex1, hex2) <span class="Identifier">{</span>
+    <span class="Comment">// Hexagons overlap if and only if all axis regions overlap.</span>
+    <span class="Statement">return</span> (
+
+        <span class="Comment">// test if x regions intersect.</span>
+        !(hex1.xmin &gt;= hex2.xmax || hex2.xmin &gt;= hex1.xmax) &amp;&amp;
+
+        <span class="Comment">// test if y regions intersect.</span>
+        !(hex1.ymin &gt;= hex2.ymax || hex2.ymin &gt;= hex1.ymax) &amp;&amp;
+
+        <span class="Comment">// test if h regions intersect.</span>
+        !(hex1.hmin &gt;= hex2.hmax || hex2.hmin &gt;= hex1.hmax));
+<span class="Identifier">}</span></code>
+
+	<p>
+Now that we have determined if two boxes overlap on the screen, we can begin exploring how to determine which box is in front of the other.
 	</p>
 
 	<h3>Determine which box is in front.</h3>
 
 	<p>
-Since our boxes do not intersect each other, we can visualize their separation
+Recall that our boxes do not intersect each other. we can visualize their separation
 as a thin plane between them (see Figure 2 below).  After identifying this
 plane, we can determine which box is in front by selecting the one on the
 correct side of this plane.
@@ -352,11 +401,20 @@ cannot do this here.
 	<figure>
 		<canvas id='figure-cycle' width=650 height=200></canvas>
 		<figcaption>
-TODO: draw a cycle
+Here are three boxes intertwined in a way such that one is always behind
+another.  This prevents us from drawing a first box.
 		</figcaption>
 		<script>
 		</script>
 	</figure>
+
+	<p>
+The above figure is empty because I am still working out the details on how to
+draw such a cycle.  The common way to determine these cycles is to use <a
+href="">Tarjan's strongly connection components</a> algorithm.  After detecting them,
+one could either split a block to prevent a cycle, or to use a clipping region to prevent
+drawing over any blocks that are supposed to be in front of it.
+	</p>
 
 	<hr>
 	<h2>Appendix</h2>
@@ -365,8 +423,12 @@ TODO: draw a cycle
 	<h4>A formal description of the solution</h4>
 
 	<p>
-For those who are interested, the way in which we determined the drawing order
-of the boxes is known in graph theory as a <a
+For those who are interested, our method for determining if hexagons and boxes
+are overlapping is a result of the <a href="http://en.wikipedia.org/wiki/Hyperplane_separation_theorem">hyperplane separation theorem</a>.
+	</p>
+
+	<p>
+The way in which we determined the drawing order of the boxes is known in graph theory as a <a
 href="http://en.wikipedia.org/wiki/Topological_sorting">topological sort</a>,
 which is essentially a depth-first search of a directed graph.
 	</p>

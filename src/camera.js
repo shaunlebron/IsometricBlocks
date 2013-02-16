@@ -132,7 +132,7 @@ IsoBlock.Camera.prototype = {
 			ymin: verts.frontDown.y,
 			ymax: verts.backUp.y,
 			hmin: verts.leftDown.h,
-			hmin: verts.rightDown.h,
+			hmax: verts.rightDown.h,
 		};
 	},
 

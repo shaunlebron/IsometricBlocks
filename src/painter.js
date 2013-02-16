@@ -27,6 +27,7 @@ IsoBlock.Painter.prototype = {
 			return this.camera.isoToScreen(pos);
 		}
 		else {
+			console.log("x",pos.x,"y",pos.y,"z",pos.z,"h",pos.h,"v",pos.v);
 			throw "painter.transform: Unable to detect coordinate system of given vector";
 		}
 	},
