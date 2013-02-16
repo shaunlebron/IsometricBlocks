@@ -25,10 +25,9 @@ IsoBlock.makeFigure = function(options) {
 		// make sure the axis extends to the edge of the canvas
 		axisLen = Math.floor((canvas.width - origin.x) / scale / Math.cos(Math.PI/6)) - 0.5;
 	}
-	// this is the height of the horizontal axis shown for the silhouette.
-	// The haxis shares the same end points as the x and y axes.
-	// This height value is added to the end points to give it vertical displacement.
-	var hAxisHeight = origin.y/scale - 1 - axisLen/2; // height from origin subtracted from the height of the xy axis endpoints
+
+	// Get horizontal axis' vertical displacement from origin.
+	var hAxisV = origin.y/scale - 1;
 
 	// create camera and painter.
 	var camera = new IsoBlock.Camera(origin, scale);
@@ -47,14 +46,14 @@ IsoBlock.makeFigure = function(options) {
 		// plot x lines
 		ctx.beginPath();
 		for (x=-maxx; x<=maxx; x+=step) {
-			painter.moveTo(ctx, {x:x, y:-maxy, z:0});
-			painter.lineTo(ctx, {x:x, y:maxy, z:0});
+			painter.moveTo(ctx, {x:x, y:-maxy});
+			painter.lineTo(ctx, {x:x, y:maxy});
 		}
 
 		// plot y lines
 		for (y=-maxy; y<=maxy; y+=step) {
-			painter.moveTo(ctx, {x:-maxx, y:y, z:0});
-			painter.lineTo(ctx, {x:maxx, y:y, z:0});
+			painter.moveTo(ctx, {x:-maxx, y:y});
+			painter.lineTo(ctx, {x:maxx, y:y});
 		}
 
 		// draw grid lines
@@ -74,44 +73,63 @@ IsoBlock.makeFigure = function(options) {
 		var arrowSize = 0.3;
 
 		// draw x,y axes (and h axis if silhouette)
+		var xAxisStart = camera.spaceToIso({x:-axisLen, y:0});
+		var xAxisEnd = camera.spaceToIso({x:axisLen, y:0});
+		var yAxisStart = camera.spaceToIso({x:0, y:-axisLen});
+		var yAxisEnd = camera.spaceToIso({x:0, y:axisLen});
+		var hAxisStart = {h:yAxisEnd.h, v:hAxisV};
+		var hAxisEnd = {h:xAxisEnd.h, v:hAxisV};
 		ctx.beginPath();
-		painter.moveTo(ctx, {x:-axisLen, y:0, z:0});
-		painter.lineTo(ctx, {x:axisLen, y:0, z:0});
-		painter.moveTo(ctx, {x:0, y:-axisLen, z:0});
-		painter.lineTo(ctx, {x:0, y:axisLen, z:0});
+		painter.moveTo(ctx, xAxisStart);
+		painter.lineTo(ctx, xAxisEnd);
+		painter.moveTo(ctx, yAxisStart);
+		painter.lineTo(ctx, yAxisEnd);
 		if (silhouette) {
-			painter.moveTo(ctx, {x:axisLen, y:0, z: hAxisHeight});
-			painter.lineTo(ctx, {x:0, y:axisLen, z: hAxisHeight});
+			painter.moveTo(ctx, hAxisStart);
+			painter.lineTo(ctx, hAxisEnd);
 		}
 		ctx.stroke();
 
 		// draw x-axis arrow
 		ctx.beginPath();
-		painter.moveTo(ctx, {x:axisLen, y:0, z:0});
-		painter.lineTo(ctx, {x:axisLen-arrowSize, y:-arrowSize, z:0});
-		painter.lineTo(ctx, {x:axisLen-arrowSize, y:arrowSize, z:0});
+		painter.moveTo(ctx, {x:axisLen, y:0});
+		painter.lineTo(ctx, {x:axisLen-arrowSize, y:-arrowSize});
+		painter.lineTo(ctx, {x:axisLen-arrowSize, y:arrowSize});
 		ctx.closePath();
 		ctx.fill();
 
 		// draw y-axis arrow
 		ctx.beginPath();
-		painter.moveTo(ctx, {y:axisLen, x:0, z:0});
-		painter.lineTo(ctx, {y:axisLen-arrowSize, x:-arrowSize, z:0});
-		painter.lineTo(ctx, {y:axisLen-arrowSize, x:arrowSize, z:0});
+		painter.moveTo(ctx, {y:axisLen, x:0});
+		painter.lineTo(ctx, {y:axisLen-arrowSize, x:-arrowSize});
+		painter.lineTo(ctx, {y:axisLen-arrowSize, x:arrowSize});
+		ctx.closePath();
+		ctx.fill();
+
+		// draw h-axis arrow
+		ctx.beginPath();
+		painter.moveTo(ctx, hAxisStart);
+		painter.lineTo(ctx, {h:hAxisStart.h+arrowSize, v:hAxisV+arrowSize});
+		painter.lineTo(ctx, {h:hAxisStart.h+arrowSize, v:hAxisV-arrowSize});
+		ctx.closePath();
+		ctx.fill();
+		ctx.beginPath();
+		painter.moveTo(ctx, hAxisEnd);
+		painter.lineTo(ctx, {h:hAxisEnd.h-arrowSize, v:hAxisV+arrowSize});
+		painter.lineTo(ctx, {h:hAxisEnd.h-arrowSize, v:hAxisV-arrowSize});
 		ctx.closePath();
 		ctx.fill();
 
 		// draw axis labels
-		var p = camera.spaceToScreen({x:axisLen-1, y:-1, z:0});
+		var p = painter.transform({x:axisLen-1, y:-1});
 		ctx.font = "italic 1em serif";
 		ctx.textBaseline='middle';
 		ctx.textAlign='right';
 		ctx.fillText("x",p.x,p.y);
-		p = camera.spaceToScreen({x:-1, y:axisLen-1, z:0});
+		p = painter.transform({x:-1, y:axisLen-1});
 		ctx.textAlign='left';
 		ctx.fillText("y",p.x,p.y);
 		
-
 		// draw axis ranges for each block
 		var i,len,bounds,color,rgb,minp,maxp;
 		var s = 0.25;
@@ -126,19 +144,19 @@ IsoBlock.makeFigure = function(options) {
 
 			// draw x axis range
 			painter.fillQuad(ctx,
-				{x:bounds.xmin, y:0, z:0},
-				{x:bounds.xmin, y:s, z:0},
-				{x:bounds.xmax, y:s, z:0},
-				{x:bounds.xmax, y:0, z:0},
+				{x:bounds.xmin, y:0},
+				{x:bounds.xmin, y:s},
+				{x:bounds.xmax, y:s},
+				{x:bounds.xmax, y:0},
 				tcolor
 			);
 
 			// draw y axis range
 			painter.fillQuad(ctx,
-				{x:0, y:bounds.ymin, z:0},
-				{x:s, y:bounds.ymin, z:0},
-				{x:s, y:bounds.ymax, z:0},
-				{x:0, y:bounds.ymax, z:0},
+				{x:0, y:bounds.ymin},
+				{x:s, y:bounds.ymin},
+				{x:s, y:bounds.ymax},
+				{x:0, y:bounds.ymax},
 				tcolor
 			);
 		}

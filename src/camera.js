@@ -62,44 +62,28 @@ IsoBlock.Camera.prototype = {
 
 	// Convert 3D space coordinates to flattened 2D isometric coordinates.
 	// x and y coordinates are oblique axes separated by 120 degrees.
-	// h is an extra horizontal component, which is unnecessary but helpful.
+	// h,v are the horizontal and vertical distances from the origin.
 	spaceToIso: function(spacePos) {
-		// The z coordinate is simply added to x and y.
-		// For example a box at (1,1,0) is in the same apparent
+		var z = (spacePos.z == undefined) ? 0 : spacePos.z;
+
+		var x = spacePos.x + z;
+		var y = spacePos.y + z;
+
 		return {
-			x: spacePos.x + spacePos.z,
-			y: spacePos.y + spacePos.z,
-			h: spacePos.x - spacePos.y,
+			x: x,
+			y: y,
+			h: (x-y)*Math.cos(Math.PI/6),
+			v: (x+y)/2,
 		};
 	},
 
 	// Convert the given 2D isometric coordinates to 2D screen coordinates.
-	isoToScreen: (function(){
-
-		// Create the isometric axis vectors in the canvas coordinate frame (x+ right, y+ down).
-		// These are oblique axes separated by 120 degrees.
-		var a = Math.PI/6;
-		var xIsoAxis = new IsoBlock.Vector(Math.cos(a), -Math.sin(a));
-		var yIsoAxis = new IsoBlock.Vector(-Math.cos(a), -Math.sin(a));
-
-		return function(isoPos) {
-			// start at origin
-			var screenPos = new IsoBlock.Vector(0,0);
-
-			// add screen displacements for each axis.
-			var a = xIsoAxis.copy().mul(isoPos.x);
-			var b = yIsoAxis.copy().mul(isoPos.y);
-			screenPos.add(a).add(b);
-
-			// apply scale
-			screenPos.mul(this.scale);
-
-			// apply translate
-			screenPos.add(this.origin);
-
-			return screenPos;
+	isoToScreen: function(isoPos) {
+		return {
+			x: isoPos.h * this.scale + this.origin.x,
+			y: -isoPos.v * this.scale + this.origin.y,
 		};
-	})(),
+	},
 
 	// Convert the given 3D space coordinates to 2D screen coordinates.
 	spaceToScreen: function(spacePos) {

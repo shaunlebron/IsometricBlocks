@@ -6,12 +6,36 @@ IsoBlock.Painter = function(camera) {
 };
 
 IsoBlock.Painter.prototype = {
-	moveTo: function(ctx, vector3) {
-		var v = this.camera.spaceToScreen(vector3);
+
+	// This function allows us to draw using different coordinate systems.
+	// It accepts a nondescript position vector and tries to detect
+	// what coordinate system it is in by looking at its properties.
+	//		(x,y,z)   <- treated as a space coordinate
+	//		(x,y)     <- treated as a space coordinate at z=0
+	//                   (same as 2D isometric XY)
+	//		(h,v)     <- treated as a special 2D isometric coordinate
+	//                   (with horizontal and vertical distance from origin)
+	transform: function(pos) {
+		var x,y,z;
+		if (pos.x != undefined && pos.y != undefined) {
+			x = pos.x;
+			y = pos.y;
+			z = (pos.z == undefined) ? 0 : pos.z;
+			return this.camera.spaceToScreen({x:x, y:y, z:z});
+		}
+		else if (pos.h != undefined && pos.v != undefined) {
+			return this.camera.isoToScreen(pos);
+		}
+		else {
+			throw "painter.transform: Unable to detect coordinate system of given vector";
+		}
+	},
+	moveTo: function(ctx, pos) {
+		var v = this.transform(pos);
 		ctx.moveTo(v.x,v.y);
 	},
-	lineTo: function(ctx, vector3) {
-		var v = this.camera.spaceToScreen(vector3);
+	lineTo: function(ctx, pos) {
+		var v = this.transform(pos);
 		ctx.lineTo(v.x,v.y);
 	},
 	quad: function(ctx, p1, p2, p3, p4) {
@@ -33,9 +57,9 @@ IsoBlock.Painter.prototype = {
 		}
 	},
 	fillQuadGradient: function(ctx, p1, p2, p3, p4, color1, color2) {
-		var v1 = this.camera.spaceToScreen(p1);
-		var v4 = this.camera.spaceToScreen(p4);
-		var v2 = this.camera.spaceToScreen(p2);
+		var v1 = this.transform(p1);
+		var v4 = this.transform(p4);
+		var v2 = this.transform(p2);
 		var dx = v4.x-v1.x;
 		var dy = v4.y-v1.y;
 		var dist = Math.sqrt(dx*dx+dy*dy);
@@ -73,14 +97,14 @@ IsoBlock.Painter.prototype = {
 		ctx.stroke();
 	},
 	fillCircle: function(ctx, p1, radius, color) {
-		var v = this.camera.spaceToScreen(p1);
+		var v = this.transform(p1);
 		ctx.beginPath();
 		ctx.arc(v.x,v.y,radius,0,2*Math.PI);
 		ctx.fillStyle = color;
 		ctx.fill();
 	},
 	strokeCircle: function(ctx, p1, radius, color) {
-		var v = this.camera.spaceToScreen(p1);
+		var v = this.transform(p1);
 		ctx.beginPath();
 		ctx.arc(v.x,v.y,radius,0,2*Math.PI);
 		ctx.fillStyle = color;
