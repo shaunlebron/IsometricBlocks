@@ -72,8 +72,8 @@ IsoBlock.Camera.prototype = {
 		return {
 			x: x,
 			y: y,
-			h: (x-y)*Math.cos(Math.PI/6),
-			v: (x+y)/2,
+			h: (x-y)*Math.sqrt(3)/2, // Math.cos(Math.PI/6)
+			v: (x+y)/2,              // Math.sin(Math.PI/6)
 		};
 	},
 
