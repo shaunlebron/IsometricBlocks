@@ -1,7 +1,6 @@
 Isometric Blocks
 ================
 
-<a href="http://shaunew.github.com/IsometricBlocks">
-A tutorial on how to render isometric blocks in the correct order.
+[A tutorial on how to render isometric blocks in the correct order](http://shaunew.github.com/IsometricBlocks)
 
-<img src="http://shaunew.github.com/IsometricBlocks/isom.png"></a>
+<img src="http://shaunew.github.com/IsometricBlocks/isom.png">
