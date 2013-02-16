@@ -128,11 +128,11 @@ which we explore in this section.
 	</p>
 
 	<figure>
-		<canvas id='figure-overlap1' width=350 height=200></canvas>
-		<canvas id='figure-overlap2' width=350 height=200></canvas>
+		<canvas id='figure2a' width=350 height=200></canvas>
+		<canvas id='figure2b' width=350 height=200></canvas>
 		<figcaption>
-No overlap on the left; overlap on the right.  (Note: we are talking about
-overlap on screen, not intersection in space.)
+Figure 2: No overlap on the left; overlap on the right.  (Note: we are talking
+about overlap on screen, not intersection in space.)
 		</figcaption>
 		<script>
 			var rightBlock =   new IsoBlock.Block({x:4,y:1,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
@@ -140,11 +140,11 @@ overlap on screen, not intersection in space.)
 			var rightBlockOverlap =   new IsoBlock.Block({x:3,y:2,z:0},{x:2,y:2,z:2}, IsoBlock.colors.blue);
 			var leftBlockOverlap =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.green);
 			var scale = function(w,h) { return h/9;};
-			IsoBlock.makeFigure({ canvas:'figure-overlap1',
+			IsoBlock.makeFigure({ canvas:'figure2a',
 				blocks: [ leftBlock, rightBlock ],
 				scale: scale,
 			});
-			IsoBlock.makeFigure({ canvas:'figure-overlap2',
+			IsoBlock.makeFigure({ canvas:'figure2b',
 				blocks: [ leftBlockOverlap, rightBlockOverlap ],
 				scale: scale,
 			});
@@ -157,19 +157,19 @@ outline of these silhouettes to test for overlap.
 	</p>
 
 	<figure>
-		<canvas id='figure-overlap3' width=350 height=200></canvas>
-		<canvas id='figure-overlap4' width=350 height=200></canvas>
+		<canvas id='figure3a' width=350 height=200></canvas>
+		<canvas id='figure3b' width=350 height=200></canvas>
 		<figcaption>
-The box silhouettes in an isometric view are simple hexagons.  Note that their sides
-are always parallel to the vertical and two diagonal axes.
+Figure 3: The box silhouettes in an isometric view are simple hexagons.  Note
+that their sides are always parallel to the vertical and two diagonal axes.
 		</figcaption>
 		<script>
-			IsoBlock.makeFigure({ canvas:'figure-overlap3',
+			IsoBlock.makeFigure({ canvas:'figure3a',
 				blocks: [ leftBlock, rightBlock ],
 				scale: scale,
 				silhouette: true,
 			});
-			IsoBlock.makeFigure({ canvas:'figure-overlap4',
+			IsoBlock.makeFigure({ canvas:'figure3b',
 				blocks: [ leftBlockOverlap, rightBlockOverlap ],
 				scale: scale,
 				silhouette: true,
@@ -185,20 +185,20 @@ checking for intersection of their regions on each axis.  We add an <em>h</em>
 	</p>
 
 	<figure>
-		<canvas id='figure-overlap5' width=350 height=200></canvas>
-		<canvas id='figure-overlap6' width=350 height=200></canvas>
+		<canvas id='figure4a' width=350 height=200></canvas>
+		<canvas id='figure4b' width=350 height=200></canvas>
 		<figcaption>
 The red and blue boxes do not overlap on the h axis, therefore they do not overlap.
 The green and blue boxes do overlap since their region on every axis overlap.
 		</figcaption>
 		<script>
-			IsoBlock.makeFigure({ canvas:'figure-overlap5',
+			IsoBlock.makeFigure({ canvas:'figure4a',
 				blocks: [ leftBlock, rightBlock ],
 				drawAxis: true,
 				silhouette: true,
 				scale: scale,
 			});
-			IsoBlock.makeFigure({ canvas:'figure-overlap6',
+			IsoBlock.makeFigure({ canvas:'figure4b',
 				blocks: [ leftBlockOverlap, rightBlockOverlap ],
 				drawAxis: true,
 				silhouette: true,
@@ -266,17 +266,17 @@ Now that we have determined if two boxes overlap on the screen, we can begin exp
 
 	<p>
 Recall that our boxes do not intersect each other. we can visualize their separation
-as a thin plane between them (see Figure 2 below).  After identifying this
+as a thin plane between them (see Figure 5 below).  After identifying this
 plane, we can determine which box is in front by selecting the one on the
 correct side of this plane.
 	</p>
 
 	<figure>
-		<canvas id='figure2a' width=230 height=200></canvas>
-		<canvas id='figure2b' width=230 height=200></canvas>
-		<canvas id='figure2c' width=230 height=200></canvas>
+		<canvas id='figure5a' width=230 height=200></canvas>
+		<canvas id='figure5b' width=230 height=200></canvas>
+		<canvas id='figure5c' width=230 height=200></canvas>
 		<figcaption>
-Figure 2: A pair of blocks can be separated in one of three ways shown here. 
+Figure 5: A pair of blocks can be separated in one of three ways shown here. 
 The dark glass illustrates this separation.
 		</figcaption>
 		<script>
@@ -284,13 +284,13 @@ The dark glass illustrates this separation.
 			var leftBlock =  new IsoBlock.Block({x:2,y:4,z:0},{x:2.25,y:2,z:1}, IsoBlock.colors.red);
 			var topBlock =   new IsoBlock.Block({x:4,y:2,z:2},{x:1.25,y:2,z:1}, IsoBlock.colors.orange);
 			var frontBlock = new IsoBlock.Block({x:1,y:1,z:0},{x:2,y:2,z:1}, IsoBlock.colors.green);
-			IsoBlock.makeFigure({ canvas:'figure2a', drawPlane: true,
+			IsoBlock.makeFigure({ canvas:'figure5a', drawPlane: true,
 				blocks: [ refBlock, leftBlock ],
 			});
-			IsoBlock.makeFigure({ canvas:'figure2b', drawPlane: true,
+			IsoBlock.makeFigure({ canvas:'figure5b', drawPlane: true,
 				blocks: [ refBlock, topBlock ],
 			});
-			IsoBlock.makeFigure({ canvas:'figure2c', drawPlane: true,
+			IsoBlock.makeFigure({ canvas:'figure5c', drawPlane: true,
 				blocks: [ refBlock, frontBlock ],
 			});
 		</script>
@@ -299,22 +299,22 @@ The dark glass illustrates this separation.
 	<p>
 We can find this plane of separation by looking at each axis individually.  In
 particular, we look for an axis which has non-intersecting box ranges (see
-Figure 3 below).  
+Figure 6 below).  
 	</p>
 
 	<figure>
-		<canvas id='figure3a' width=350 height=200></canvas>
-		<canvas id='figure3b' width=350 height=200></canvas>
+		<canvas id='figure6a' width=350 height=200></canvas>
+		<canvas id='figure6b' width=350 height=200></canvas>
 		<figcaption>
-Figure 3: On the left, the blocks are separated on the y-axis.  On the right,
+Figure 6: On the left, the blocks are separated on the y-axis.  On the right,
 the blocks are separated on the x-axis. (The z-axis is omitted for simplicity.)
 		</figcaption>
 		<script>
-			IsoBlock.makeFigure({ canvas:'figure3a',
+			IsoBlock.makeFigure({ canvas:'figure6a',
 				blocks: [ refBlock, leftBlock ],
 				drawAxis: true,
 			});
-			IsoBlock.makeFigure({ canvas:'figure3b',
+			IsoBlock.makeFigure({ canvas:'figure6b',
 				blocks: [ refBlock, frontBlock ],
 				drawAxis: true,
 			});
@@ -322,7 +322,7 @@ the blocks are separated on the x-axis. (The z-axis is omitted for simplicity.)
 	</figure>
 
 	<p>
-In Figure 3 above, we have chosen a coordinate system which make lesser values
+In Figure 6 above, we have chosen a coordinate system which make lesser values
 of <em>x</em> and <em>y</em> to be closer to the camera.  Though not shown, the
 <em>z</em> axis is positive in the up direction, so a greater value makes it
 closer to the camera.
@@ -363,7 +363,7 @@ for an example.)
 	</p>
 
 	<figure>
-		<canvas id='figure4' width=650 height=200></canvas>
+		<canvas id='figure7' width=650 height=200></canvas>
 		<figcaption>
 Figure 4: (1) Nothing is behind blue, so draw it first. (2) Draw green next
 since blue was the only one behind it and is already drawn.  (3) Then draw red,
@@ -375,7 +375,7 @@ since both blocks that were behind it have been drawn.
 				new IsoBlock.Block({x:2,y:2,z:0},{x:1,y:1,z:1.5}, IsoBlock.colors.red),
 				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
 			];
-			IsoBlock.makeFigure({ canvas:'figure4', blocks: blocks, scale: function(w,h) { return h/7; }});
+			IsoBlock.makeFigure({ canvas:'figure7', blocks: blocks, scale: function(w,h) { return h/7; }});
 		</script>
 	</figure>
 
@@ -394,26 +394,38 @@ the correct order.
 
 	<p>
 It is possible to have a situation seen in the figure below.  The aforementioned drawing
-methods dictate that we first draw the box with nothing behind it.  You can see why we
-cannot do this here.
+methods dictate that we first draw the box with nothing behind it, but this example illustrates
+a case where this cannot be done.
 	</p>
 
 	<figure>
-		<canvas id='figure-cycle' width=650 height=200></canvas>
+		<canvas id='figure8' width=650 height=200></canvas>
 		<figcaption>
 Here are three boxes intertwined in a way such that one is always behind
 another.  This prevents us from drawing a first box.
 		</figcaption>
 		<script>
+		var blocks = [
+			new IsoBlock.Block({x:1,y:1,z:0},{x:2,y:1,z:1}, IsoBlock.colors.purple),
+			new IsoBlock.Block({x:2,y:1,z:1},{x:1,y:2,z:1}, IsoBlock.colors.red),
+			new IsoBlock.Block({x:1,y:2,z:0},{x:1,y:1,z:1}, IsoBlock.colors.orange),
+			new IsoBlock.Block({x:1,y:2,z:1},{x:1,y:1,z:1}, IsoBlock.colors.orange),
+		];
+		IsoBlock.makeFigure({ canvas:'figure8', blocks: blocks, scale: function(w,h) { return h/6;} });
 		</script>
 	</figure>
 
 	<p>
-The above figure is empty because I am still working out the details on how to
-draw such a cycle.  The common way to determine these cycles is to use <a
-href="">Tarjan's strongly connection components</a> algorithm.  After detecting them,
-one could either split a block to prevent a cycle, or to use a clipping region to prevent
-drawing over any blocks that are supposed to be in front of it.
+The figure above cheats by segmenting the orange box into two.
+This is one method of breaking this type of cycle.
+	</p>
+
+	<p>
+There are formal methods used for detecting
+such cycles mentioned in the appendix.  After detection of a cycle, the blocks in that cycle
+could be drawn with special clipping regions to respect front boxes or to segment a block or blocks
+that will break the cycle.  These are solutions that I will be exploring and updating this article as
+my experiments progress.
 	</p>
 
 	<hr>
@@ -428,7 +440,7 @@ are overlapping is a result of the <a href="http://en.wikipedia.org/wiki/Hyperpl
 	</p>
 
 	<p>
-The way in which we determined the drawing order of the boxes is known in graph theory as a <a
+Also, the way in which we determined the drawing order of the boxes is known in graph theory as a <a
 href="http://en.wikipedia.org/wiki/Topological_sorting">topological sort</a>,
 which is essentially a depth-first search of a directed graph.
 	</p>
@@ -443,6 +455,13 @@ ordered list of boxes that can be drawn in that exact order.
 Mathematicians will recognize this directed graph as a <a
 href="http://en.wikipedia.org/wiki/Partially_ordered_set">partially ordered
 set</a>.
+	</p>
+
+	<p>
+Finally, to prevent the aforementioned cycle conundrum, we can use <a href="">Tarjan's
+strongly connection components</a> algorithm.  After computing these cycles,
+one could either split a block to prevent a cycle, or to use a clipping region
+to prevent drawing over any blocks that are supposed to be in front of it.
 	</p>
 
 	<h4>Full example of working code</h4>
