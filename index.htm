@@ -4,6 +4,68 @@
 <head>
 	<meta charset="utf8">
 	<style>
+/*------------------------------------------------------------------------------
+ * Open Sans
+ *----------------------------------------------------------------------------*/
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../fonts/opensans/OpenSans-Light.eot');
+  src: local('Open Sans Light'), local('OpenSans-Light'),
+    url('../fonts/opensans/OpenSans-Light.eot') format('embedded-opentype'),
+    url('../fonts/opensans/OpenSans-Light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/opensans/OpenSans.eot');
+  src: local('Open Sans'), local('OpenSans'),
+    url('../fonts/opensans/OpenSans.eot') format('embedded-opentype'),
+    url('../fonts/opensans/OpenSans.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: url('../fonts/opensans/OpenSans-Bold.eot');
+  src: local('Open Sans Bold'), local('OpenSans-Bold'),
+    url('../fonts/opensans/OpenSans-Bold.eot') format('embedded-opentype'),
+    url('../fonts/opensans/OpenSans-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300;
+  src: local('Open Sans Light Italic'), local('OpenSansLight-Italic'),
+    url('../fonts/opensans/OpenSansLight-Italic.eot') format('embedded-opentype'),
+    url('../fonts/opensans/OpenSansLight-Italic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Open Sans Italic'), local('OpenSans-Italic'),
+    url('../fonts/opensans/OpenSans-Italic.eot') format('embedded-opentype'),
+    url('../fonts/opensans/OpenSans-Italic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: bold;
+  src: local('Open Sans Bold Italic'), local('OpenSans-BoldItalic'),
+    url('../fonts/opensans/OpenSans-BoldItalic.eot') format('embedded-opentype'),
+    url('../fonts/opensans/OpenSans-BoldItalic.woff') format('woff');
+}
+
+
 		hr {
 			margin-top:3em;
 			margin-bottom:3em;
@@ -12,22 +74,20 @@
 			width: 800px;
 			margin-left:auto;
 			margin-right:auto;
+      font-family: 'Open Sans';
 			font-size: 1.2em;
 		}
 		canvas {
-			background-color: #EEE;
-			border: 0px solid black;
-			border-radius: 5px;
-			box-shadow: 0px 0px 2px #000;
+			background-color: #f5f5f5;
 			margin-right: 5px;
 			text-align: center;
+      border: 1px solid #d7d7d7;
 		}
 		#abstract {
 			font-style: italic;
 		}
 		figure {
-			margin-top:2em;
-			margin-bottom:2em;
+      margin: 2em 2em;
 		}
 		figcaption {
 			font-style: italic;
@@ -42,19 +102,31 @@
 			margin-right: auto;
 			width: 650px;
 			padding: 1.5em;
-			background: #eee;
-			box-shadow: 0px 0px 2px #000;
-			border-radius: 5px;
+			background: #f5f5f5;
 		}
+    h1 {
+      font-size: 32px;
+    }
+    h1, h2, h3, h4 {
+      margin-top: 3em;
+      margin-bottom: -1em;
+      color: #333;
+      font-weight: 600;
+    }
+    p {
+      margin: 3em 0;
+      color: #555;
+      line-height: 1.6em;
+    }
+    figcaption {
+      opacity: 0.6;
+    }
 		p.alert{
 			border-radius: 5px;
 			box-shadow: 0px 0px 2px #000;
 			background-color: #ef2929;
 			color: white;
 			padding: 1em;
-		}
-		p.alert {
-			color: white;
 		}
 
 		/* from vim's TOhtml command for syntax highlighting code */

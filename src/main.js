@@ -57,7 +57,7 @@ IsoBlock.makeFigure = function(options) {
 		}
 
 		// draw grid lines
-		ctx.strokeStyle = "#CCC";
+		ctx.strokeStyle = "#d7d7d7";
 		ctx.lineWidth = 1;
 		ctx.stroke();
 
