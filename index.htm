@@ -348,7 +348,7 @@ correct side of this plane.
 		<canvas id='figure5b' width=230 height=200></canvas>
 		<canvas id='figure5c' width=230 height=200></canvas>
 		<figcaption>
-Figure 5: A pair of blocks can be separated in one of three ways shown here. 
+Figure 5: A pair of blocks can be separated in one of three ways shown here.
 The dark glass illustrates this separation.
 		</figcaption>
 		<script>
@@ -371,7 +371,7 @@ The dark glass illustrates this separation.
 	<p>
 We can find this plane of separation by looking at each axis individually.  In
 particular, we look for an axis which has non-intersecting box ranges (see
-Figure 6 below).  
+Figure 6 below).
 	</p>
 
 	<figure>
@@ -503,8 +503,12 @@ my experiments progress.
 	<hr>
 	<h2>Appendix</h2>
 
-	
 	<h4>A formal description of the solution</h4>
+
+	<p>
+This is a special case of the <a href="https://en.wikipedia.org/wiki/Painter%27s_algorithm">Painter's Algorithm</a>,
+which handles occlusion by drawing back-to-front.
+	</p>
 
 	<p>
 For those who are interested, our method for determining if hexagons and boxes
@@ -536,6 +540,14 @@ one could either split a block to prevent a cycle, or to use a clipping region
 to prevent drawing over any blocks that are supposed to be in front of it.
 	</p>
 
+	<h4>Alternative Solutions</h4>
+
+	<p>
+You may be able to just use <a href="https://en.wikipedia.org/wiki/Z-buffering">Z-buffering</a>,
+though drawing order is still important for transparent sprites.  Also, if all
+bounding boxes are unit cubes, sorting is much simpler.
+	</p>
+
 	<h4>Full example of working code</h4>
 
 	<p>
@@ -550,7 +562,7 @@ GitHub</a>.
 
 	<p>
 	<ul>
-		<li><a href="http://andrewrussell.net/2016/06/how-2-5d-sorting-works-in-river-city-ransom-underground/">How 2.5D Sorting works in River City Ransom: Underground</a></li>
+		<li><a href="http://andrewrussell.net/2016/06/how-2-5d-sorting-works-in-river-city-ransom-underground/">How 2.5D Sorting works in River City Ransom: Underground</a> - allowing bounding boxes to intersect by specifying heightmaps within them (<a href="https://news.ycombinator.com/item?id=12313271">summary</a>)</li>
 		<li><a href="http://bannalia.blogspot.co.uk/2008/02/filmation-math.html">Filmation engine on the ZX Spectrum</a></li>
 	</ul>
 	</p>
@@ -562,6 +574,7 @@ Thanks to Ted Suzman at <a href="http://playbuildy.com/">buildy</a> for
 introducing this problem and solution to me.  And thanks to adamhayek for <a
 href="http://www.reddit.com/r/gamedev/comments/18222r/how_to_determine_the_draw_order_for_an_isometric/c8ayzby">further
 insight</a> on a general solution. And thanks to <a href="http://www.reddit.com/r/gamedev/comments/18bg95/tutorial_how_to_render_isometric_blocks_correctly/c8dfx51">Slime0 at reddit</a> for pointing out errors in this article by illustrating the cycle example shown in this article, and for illustrating why we cannot deduce relative drawing order between two non-overlapping boxes.
+Thanks to <a href="https://lobste.rs/s/bengjo/drawing_isometric_boxes_correct_order/comments/rzgvnc#c_rzgvnc">Mark Nelson</a> for extra context on painter's algorithm and z-buffering.
 	</p>
 
 	<hr>
@@ -575,7 +588,7 @@ insight</a> on a general solution. And thanks to <a href="http://www.reddit.com/
 				new IsoBlock.Block({x:3,y:1,z:0},{x:1,y:4,z:1},   IsoBlock.colors.blue),
 				new IsoBlock.Block({x:0.5,y:5,z:0},{x:2,y:1.5,z:1},   IsoBlock.colors.orange),
 				new IsoBlock.Block({x:3,y:3,z:1},{x:1,y:1,z:2.25},   IsoBlock.colors.black),
-				new IsoBlock.Block({x:2,y:7,z:0},{x:1,y:1,z:1},   IsoBlock.colors.white), 
+				new IsoBlock.Block({x:2,y:7,z:0},{x:1,y:1,z:1},   IsoBlock.colors.white),
 				new IsoBlock.Block({x:5,y:1.5,z:0},{x:2,y:2,z:1.5}, IsoBlock.colors.purple),
 			];
 			IsoBlock.makeFigure({
